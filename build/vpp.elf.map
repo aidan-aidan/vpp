@@ -1,0 +1,574 @@
+Archive member included because of file (symbol)
+
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o (__libc_init_array)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o (fake_heap_end)
+
+Allocating common symbols
+Common symbol       size              file
+
+input               0x4               tools.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x08000000         0x02000000
+iwram            0x03000000         0x00008000
+ewram            0x02000000         0x00040000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x08000000                __text_start = ORIGIN (rom)
+                0x02040000                __eheap_end = (ORIGIN (ewram) + 0x40000)
+                0x03000000                __iwram_start = ORIGIN (iwram)
+                0x03008000                __iwram_top = (ORIGIN (iwram) + 0x8000)
+                0x03007fa0                __sp_irq = (__iwram_top - 0x60)
+                0x03007f00                __sp_usr = (__sp_irq - 0xa0)
+                0x03007ff8                __irq_flags = 0x3007ff8
+                0x08000000                . = __text_start
+
+.init           0x08000000      0x21c
+ *(.init)
+ .init          0x08000000      0x210 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+                0x08000000                _start
+                0x080000c4                __boot_method
+                0x080000c5                __slave_number
+                0x080000e0                start_vector
+ .init          0x08000210        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+                0x08000210                _init
+ .init          0x08000214        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+                0x0800021c                . = ALIGN (0x4)
+
+.plt            0x0800021c        0x0
+ *(.plt)
+                0x0800021c                . = ALIGN (0x4)
+
+.text           0x0800021c      0xd08
+ *(EXCLUDE_FILE(*.iwram*) .text)
+ .text          0x0800021c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+ .text          0x0800021c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+ .text          0x0800021c       0xd0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+ .text          0x080002ec        0x0 palettes.o
+ .text          0x080002ec        0x0 sprites.o
+ .text          0x080002ec        0x0 text.o
+ .text          0x080002ec        0x0 tilemaps.o
+ .text          0x080002ec        0x0 tilesets.o
+ .text          0x080002ec      0x28c tools.o
+                0x080002ec                getSeed
+                0x080002f8                setSeed
+                0x08000304                r
+                0x08000338                loadBGpalette
+                0x08000350                loadOBJpalette
+                0x0800036c                loadBGsubPalette
+                0x080003c8                loadOBJsubPalette
+                0x08000428                loadOBJtiles
+                0x08000458                loadBGtiles
+                0x08000484                loadBGmap
+                0x080004a4                loadAFFmap
+                0x080004bc                OBJneutralTransform
+                0x080004e4                resetBGmap
+                0x080004fc                resetBGtilesLoad
+                0x08000508                resetOBJtilesLoad
+                0x08000514                resetOAM
+                0x08000530                drawString
+                0x08000564                drawChar
+ .text          0x08000578      0x94c vpp.o
+                0x08000578                titleScreen
+                0x08000898                gameScreen
+                0x08000bf4                railGame
+                0x08000e84                drawDOS
+ .text          0x08000ec4       0x54 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+                0x08000ec4                __libc_init_array
+ .text          0x08000f18        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .text          0x08000f18        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+ .text          0x08000f18        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text.startup  0x08000f18        0xc vpp.o
+                0x08000f18                main
+ *(.text.*personality*)
+ *(.gnu.warning)
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.vfp11_veneer)
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+                0x08000f24                . = ALIGN (0x4)
+                0x08000f24                __text_end = .
+
+.v4_bx          0x08000f24        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x08000f24        0x0
+ .iplt          0x00000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+
+.fini           0x08000f24        0xc
+ *(.fini)
+ .fini          0x08000f24        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+                0x08000f24                _fini
+ .fini          0x08000f28        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+                0x08000f30                . = ALIGN (0x4)
+
+.rodata         0x08000f30     0xd294
+ *(.rodata)
+ .rodata        0x08000f30      0xa00 palettes.o
+                0x08000f30                railGameOBJpalette
+                0x08001130                railGameBGpalette
+                0x08001330                gameScreenOBJpalette
+                0x08001530                gameScreenBGpalette
+                0x08001730                titleScreenPalette
+ .rodata        0x08001930      0x480 sprites.o
+                0x08001930                projectileTiles
+                0x080019b0                gunTiles
+                0x08001bb0                shipTiles
+ .rodata        0x08001db0       0x14 text.o
+                0x08001db0                pressStartPos
+                0x08001db8                pressStart
+ .rodata        0x08001dc4     0x1800 tilemaps.o
+                0x08001dc4                earthMap
+                0x08002dc4                titleScreenMap
+ .rodata        0x080035c4     0x6c00 tilesets.o
+                0x080035c4                earthTiles
+                0x080067c4                starTiles
+                0x08006ba4                dosFontTiles
+                0x08008364                titleScreenTiles
+                0x0800a164                blank4bppTile
+                0x0800a184                blank8bppTile
+ .rodata        0x0800a1c4     0x4000 tools.o
+                0x0800a1c4                cosine
+                0x0800c1c4                sine
+ *all.rodata*(*)
+ *(.roda)
+ *(.rodata.*)
+ *(.gnu.linkonce.r*)
+                0x0800e1c4                . = ALIGN (0x4)
+
+.rel.dyn        0x0800e1c4        0x0
+ .rel.iplt      0x00000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x0800e1c4                __exidx_start = .
+
+.ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x0800e1c4                __exidx_end = .
+
+.ctors          0x0800e1c4        0x0
+ *crtbegin.o(.ctors)
+ *(EXCLUDE_FILE(*crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x0800e1c4                . = ALIGN (0x4)
+
+.dtors          0x0800e1c4        0x0
+ *crtbegin.o(.dtors)
+ *(EXCLUDE_FILE(*crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x0800e1c4                . = ALIGN (0x4)
+
+.eh_frame       0x0800e1c4        0x4
+ *(.eh_frame)
+ .eh_frame      0x0800e1c4        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+ .eh_frame      0x0800e1c4        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+                0x0800e1c8                . = ALIGN (0x4)
+
+.gcc_except_table
+                0x0800e1c8        0x0
+ *(.gcc_except_table)
+                0x0800e1c8                . = ALIGN (0x4)
+                0x0800e1c8                __iwram_lma = .
+
+.iwram          0x03000000        0x0 load address 0x0800e1c8
+                0x03000000                __iwram_start__ = ABSOLUTE (.)
+ *(.iwram)
+ *iwram.*(.text)
+                0x03000000                . = ALIGN (0x4)
+                0x03000000                __iwram_end__ = ABSOLUTE (.)
+                0x0800e1c8                __data_lma = (__iwram_lma + SIZEOF (.iwram))
+
+.bss            0x03000000       0x3c
+                0x03000000                __bss_start = ABSOLUTE (.)
+                0x03000000                __bss_start__ = ABSOLUTE (.)
+ *(.dynbss)
+ *(.gnu.linkonce.b*)
+ *(.bss*)
+ .bss           0x03000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+ .bss           0x03000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+ .bss           0x03000000       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+ .bss           0x0300001c        0x0 palettes.o
+ .bss           0x0300001c        0x0 sprites.o
+ .bss           0x0300001c        0x0 text.o
+ .bss           0x0300001c        0x0 tilemaps.o
+ .bss           0x0300001c        0x0 tilesets.o
+ .bss           0x0300001c       0x14 tools.o
+                0x0300002c                keyPrevious
+                0x0300002e                keyCurrent
+ .bss           0x03000030        0x0 vpp.o
+ .bss           0x03000030        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .bss           0x03000030        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+                0x03000030                fake_heap_start
+                0x03000034                fake_heap_end
+ .bss           0x03000038        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+ .bss           0x03000038        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+ *(COMMON)
+ COMMON         0x03000038        0x4 tools.o
+                0x03000038                input
+                0x0300003c                . = ALIGN (0x4)
+                0x0300003c                __bss_end__ = ABSOLUTE (.)
+
+.data           0x0300003c       0x18 load address 0x0800e1c8
+                0x0300003c                __data_start__ = ABSOLUTE (.)
+ *(.data)
+ .data          0x0300003c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+ .data          0x0300003c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+ .data          0x0300003c        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+                0x0300003c                __dso_handle
+ .data          0x03000040        0x0 palettes.o
+ .data          0x03000040        0x0 sprites.o
+ .data          0x03000040        0x0 text.o
+ .data          0x03000040        0x0 tilemaps.o
+ .data          0x03000040        0x0 tilesets.o
+ .data          0x03000040       0x14 tools.o
+                0x03000044                mask0
+                0x03000048                mask1
+                0x0300004c                mask21
+                0x03000050                mask31
+ .data          0x03000054        0x0 vpp.o
+ .data          0x03000054        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .data          0x03000054        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .data          0x03000054        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+ .data          0x03000054        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+ *(.data.*)
+ *(.gnu.linkonce.d*)
+                0x03000054                . = ALIGN (0x4)
+                0x0800e1e0                __preinit_lma = (__data_lma + SIZEOF (.data))
+
+.igot.plt       0x03000054        0x0 load address 0x0800e1e0
+ .igot.plt      0x00000000        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+
+.tm_clone_table
+                0x03000054        0x0 load address 0x0800e1e0
+ .tm_clone_table
+                0x03000054        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+ .tm_clone_table
+                0x03000054        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+
+.preinit_array  0x03000054        0x0 load address 0x0800e1e0
+                0x03000054                __preinit_array_start = ABSOLUTE (.)
+ *(.preinit_array)
+                0x03000054                __preinit_array_end = ABSOLUTE (.)
+                0x0800e1e0                __init_lma = (__preinit_lma + SIZEOF (.preinit_array))
+
+.init_array     0x03000054        0x4 load address 0x0800e1e0
+                0x03000054                __init_array_start = ABSOLUTE (.)
+ *(SORT(.init_array.*))
+ *(.init_array)
+ .init_array    0x03000054        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+                0x03000058                __init_array_end = ABSOLUTE (.)
+                0x0800e1e4                __fini_lma = (__init_lma + SIZEOF (.init_array))
+
+.fini_array     0x03000058        0x4 load address 0x0800e1e4
+                0x03000058                __fini_array_start = ABSOLUTE (.)
+ *(SORT(.fini_array.*))
+ *(.fini_array)
+ .fini_array    0x03000058        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+                0x0300005c                __fini_array_end = ABSOLUTE (.)
+                0x0800e1e8                __jcr_lma = (__fini_lma + SIZEOF (.fini_array))
+
+.jcr            0x0300005c        0x4 load address 0x0800e1e8
+ *(.jcr)
+ .jcr           0x0300005c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+ .jcr           0x0300005c        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+                0x03000060                __data_end__ = ABSOLUTE (.)
+                0x0800e1ec                __iwram_overlay_lma = (__jcr_lma + SIZEOF (.jcr))
+                0x03000060                __iwram_overlay_start = .
+
+.iwram0         0x03000060        0x0 load address 0x0800e1ec
+ *(.iwram0)
+                0x03000060                . = ALIGN (0x4)
+                0x0800e1ec                PROVIDE (__load_start_iwram0, LOADADDR (.iwram0))
+                0x0800e1ec                PROVIDE (__load_stop_iwram0, (LOADADDR (.iwram0) + SIZEOF (.iwram0)))
+
+.iwram1         0x03000060        0x0
+ *(.iwram1)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram1, LOADADDR (.iwram1))
+                0x03000060                PROVIDE (__load_stop_iwram1, (LOADADDR (.iwram1) + SIZEOF (.iwram1)))
+
+.iwram2         0x03000060        0x0
+ *(.iwram2)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram2, LOADADDR (.iwram2))
+                0x03000060                PROVIDE (__load_stop_iwram2, (LOADADDR (.iwram2) + SIZEOF (.iwram2)))
+
+.iwram3         0x03000060        0x0
+ *(.iwram3)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram3, LOADADDR (.iwram3))
+                0x03000060                PROVIDE (__load_stop_iwram3, (LOADADDR (.iwram3) + SIZEOF (.iwram3)))
+
+.iwram4         0x03000060        0x0
+ *(.iwram4)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram4, LOADADDR (.iwram4))
+                0x03000060                PROVIDE (__load_stop_iwram4, (LOADADDR (.iwram4) + SIZEOF (.iwram4)))
+
+.iwram5         0x03000060        0x0
+ *(.iwram5)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram5, LOADADDR (.iwram5))
+                0x03000060                PROVIDE (__load_stop_iwram5, (LOADADDR (.iwram5) + SIZEOF (.iwram5)))
+
+.iwram6         0x03000060        0x0
+ *(.iwram6)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram6, LOADADDR (.iwram6))
+                0x03000060                PROVIDE (__load_stop_iwram6, (LOADADDR (.iwram6) + SIZEOF (.iwram6)))
+
+.iwram7         0x03000060        0x0
+ *(.iwram7)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram7, LOADADDR (.iwram7))
+                0x03000060                PROVIDE (__load_stop_iwram7, (LOADADDR (.iwram7) + SIZEOF (.iwram7)))
+
+.iwram8         0x03000060        0x0
+ *(.iwram8)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram8, LOADADDR (.iwram8))
+                0x03000060                PROVIDE (__load_stop_iwram8, (LOADADDR (.iwram8) + SIZEOF (.iwram8)))
+
+.iwram9         0x03000060        0x0
+ *(.iwram9)
+                0x03000060                . = ALIGN (0x4)
+                0x03000060                PROVIDE (__load_start_iwram9, LOADADDR (.iwram9))
+                0x03000060                PROVIDE (__load_stop_iwram9, (LOADADDR (.iwram9) + SIZEOF (.iwram9)))
+                0x03000060                __iwram_overlay_end = .
+                0x0800e1ec                __ewram_lma = (__iwram_overlay_lma + (__iwram_overlay_end - __iwram_overlay_start))
+                0x03000060                __iheap_start = .
+                0x02000000                __ewram_start = ORIGIN (ewram)
+
+.ewram          0x02000000        0x0 load address 0x0800e1ec
+ *(.ewram)
+                0x02000000                . = ALIGN (0x4)
+                0x02000000                __ewram_end = ABSOLUTE (.)
+                0x0800e1ec                __pad_lma = (__ewram_lma + SIZEOF (.ewram))
+
+.sbss           0x02000000        0x0
+                0x02000000                __sbss_start__ = ABSOLUTE (.)
+ *(.sbss)
+                0x02000000                . = ALIGN (0x4)
+                0x02000000                __sbss_end__ = ABSOLUTE (.)
+                0x02000000                __end__ = ABSOLUTE (.)
+                0x02000000                __eheap_start = ABSOLUTE (.)
+
+.pad            0x02000000        0x8 load address 0x0800e1ec
+                0x02000000        0x4 LONG 0x52416b64
+                0x02000004        0x4 LONG 0x4d
+                0x02000008                . = ALIGN (0x4)
+                0x0800e1f4                __rom_end__ = (__pad_lma + SIZEOF (.pad))
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x00000000       0x22
+ *(.comment)
+ .comment       0x00000000       0x22 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+                                 0x23 (size before relaxing)
+ .comment       0x00000000       0x23 palettes.o
+ .comment       0x00000000       0x23 sprites.o
+ .comment       0x00000000       0x23 text.o
+ .comment       0x00000000       0x23 tilemaps.o
+ .comment       0x00000000       0x23 tilesets.o
+ .comment       0x00000000       0x23 tools.o
+ .comment       0x00000000       0x23 vpp.o
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0xc0
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x18 palettes.o
+ .debug_aranges
+                0x00000018       0x18 sprites.o
+ .debug_aranges
+                0x00000030       0x18 text.o
+ .debug_aranges
+                0x00000048       0x18 tilemaps.o
+ .debug_aranges
+                0x00000060       0x18 tilesets.o
+ .debug_aranges
+                0x00000078       0x20 tools.o
+ .debug_aranges
+                0x00000098       0x28 vpp.o
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x00000000     0x16a0
+ *(.debug_info)
+ .debug_info    0x00000000       0xfe palettes.o
+ .debug_info    0x000000fe       0xe0 sprites.o
+ .debug_info    0x000001de       0xf0 text.o
+ .debug_info    0x000002ce       0xcb tilemaps.o
+ .debug_info    0x00000399      0x16b tilesets.o
+ .debug_info    0x00000504      0x5df tools.o
+ .debug_info    0x00000ae3      0xbbd vpp.o
+
+.debug_abbrev   0x00000000      0x67b
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x6c palettes.o
+ .debug_abbrev  0x0000006c       0x6c sprites.o
+ .debug_abbrev  0x000000d8       0x97 text.o
+ .debug_abbrev  0x0000016f       0x6c tilemaps.o
+ .debug_abbrev  0x000001db       0x86 tilesets.o
+ .debug_abbrev  0x00000261      0x16d tools.o
+ .debug_abbrev  0x000003ce      0x2ad vpp.o
+
+.debug_line     0x00000000      0x637
+ *(.debug_line)
+ .debug_line    0x00000000       0x6e palettes.o
+ .debug_line    0x0000006e       0x6d sprites.o
+ .debug_line    0x000000db       0x6a text.o
+ .debug_line    0x00000145       0x6e tilemaps.o
+ .debug_line    0x000001b3       0x6e tilesets.o
+ .debug_line    0x00000221      0x157 tools.o
+ .debug_line    0x00000378      0x2bf vpp.o
+
+.debug_frame    0x00000000      0x25c
+ *(.debug_frame)
+ .debug_frame   0x00000000      0x190 tools.o
+ .debug_frame   0x00000190       0xcc vpp.o
+
+.debug_str      0x00000000      0x517
+ *(.debug_str)
+ .debug_str     0x00000000       0xda palettes.o
+                                 0xf3 (size before relaxing)
+ .debug_str     0x000000da       0x44 sprites.o
+                                 0xb4 (size before relaxing)
+ .debug_str     0x0000011e       0x3d text.o
+                                 0xb2 (size before relaxing)
+ .debug_str     0x0000015b       0x3a tilemaps.o
+                                 0xaa (size before relaxing)
+ .debug_str     0x00000195       0x71 tilesets.o
+                                 0xe1 (size before relaxing)
+ .debug_str     0x00000206      0x185 tools.o
+                                0x20d (size before relaxing)
+ .debug_str     0x0000038b      0x18c vpp.o
+                                0x39f (size before relaxing)
+
+.debug_loc      0x00000000      0xc9f
+ *(.debug_loc)
+ .debug_loc     0x00000000      0x5bb tools.o
+ .debug_loc     0x000005bb      0x6e4 vpp.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.stack          0x00080000        0x0
+                0x00080000                _stack = .
+ *(.stack)
+
+.note.gnu.arm.ident
+ *(.note.gnu.arm.ident)
+
+.ARM.attributes
+                0x00000000       0x2d
+ *(.ARM.attributes)
+ .ARM.attributes
+                0x00000000       0x18 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+ .ARM.attributes
+                0x00000018       0x18 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+ .ARM.attributes
+                0x00000030       0x32 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+ .ARM.attributes
+                0x00000062       0x2e palettes.o
+ .ARM.attributes
+                0x00000090       0x2e sprites.o
+ .ARM.attributes
+                0x000000be       0x2e text.o
+ .ARM.attributes
+                0x000000ec       0x2e tilemaps.o
+ .ARM.attributes
+                0x0000011a       0x2e tilesets.o
+ .ARM.attributes
+                0x00000148       0x2e tools.o
+ .ARM.attributes
+                0x00000176       0x2e vpp.o
+ .ARM.attributes
+                0x000001a4       0x32 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .ARM.attributes
+                0x000001d6       0x32 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .ARM.attributes
+                0x00000208       0x32 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+ .ARM.attributes
+                0x0000023a       0x18 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+
+/DISCARD/
+ *(.note.GNU-stack)
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb/gba_crt0.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crti.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtbegin.o
+LOAD palettes.o
+LOAD sprites.o
+LOAD text.o
+LOAD tilemaps.o
+LOAD tilesets.o
+LOAD tools.o
+LOAD vpp.o
+LOAD c:/devkitPro/libgba/lib\libgba.a
+START GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb\libgcc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libg.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/../../../../arm-none-eabi/lib/thumb\libsysbase.a
+END GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtend.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-none-eabi/4.7.1/thumb/crtn.o
+OUTPUT(d:/programs/vpp/vpp.elf elf32-littlearm)
+
+.debug_ranges   0x00000000       0xb8
+ .debug_ranges  0x00000000       0xb8 vpp.o
