@@ -7,9 +7,11 @@
 
 typedef struct projectile{
 	sprite data;
-	point location;
+	s32 x;
+	s32 y;
 	u32 animation;
 	u32 enabled;
+	u32 angle;
 }projectile;
 
 #define PRESSSTARTRED 0x2D7F
