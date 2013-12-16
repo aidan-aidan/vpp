@@ -7,9 +7,7 @@
 
 typedef struct projectile{
 	sprite data;
-	s32 x;
-	s32 y;
-	u32 animation;
+	point location;
 	u32 enabled;
 	u32 angle;
 }projectile;

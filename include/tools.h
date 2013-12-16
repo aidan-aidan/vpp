@@ -14,24 +14,50 @@ typedef signed    short  s16;
 typedef unsigned  char   u8;
 typedef signed    char   s8;
 
-typedef struct sprite{
-	u16* attribute0;
-	u16* attribute1;
-	u16* attribute2;
-}sprite;
-typedef struct affSprite{
-	u16* attribute0;
-	u16* attribute1;
-	u16* attribute2;
-	u16* pa;
-	u16* pb;
-	u16* pc;
-	u16* pd;
-}affSprite;
 typedef struct point{
 	s32 x;
 	s32 y;
 }point;
+typedef struct sprite{
+	u16*  attribute0;
+	u16*  attribute1;
+	u16*  attribute2;
+	point location;
+}sprite;
+typedef struct affSprite{
+	u16*  attribute0;
+	u16*  attribute1;
+	u16*  attribute2;
+	u16*  pa;
+	u16*  pb;
+	u16*  pc;
+	u16*  pd;
+	s32   paD;
+	s32   pbD;
+	s32   pcD;
+	s32   pdD;
+	u32   angle;
+	point location;
+}affSprite;
+typedef struct affBG{
+	u16*  			attribute0;
+	u16*  			attribute1;
+	u16*  			attribute2;
+	volatile u16* 	pa;
+	volatile u16* 	pb;
+	volatile u16* 	pc;
+	volatile u16* 	pd;
+	volatile u32*	dx;
+	volatile u32*   dy;
+	volatile u16*   cnt;
+	s32   			paD;
+	s32   			pbD;
+	s32   			pcD;
+	s32   			pdD;
+	u32   			angle;
+	point 			locationScr;
+	point 			locationTex;
+}affBG;
 typedef struct rectangle{
 	point location;
 	u32 width;
