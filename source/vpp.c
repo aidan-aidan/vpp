@@ -280,12 +280,12 @@ void railGame(void)
 		{
 			keyPoll();
 			
-			if(keyPress(BUTTON_A))
+			if(keyDown(BUTTON_A) && !(vBlankCount % 6))
 			{
-				projectiles[projectileIndex].angle = gunAngle;
+				projectiles[projectileIndex].angle = gunAngle + ((r() >> 27) - 16);
 				projectiles[projectileIndex].enabled = 1;
-				projectiles[projectileIndex].x = gunPos.x * 256;
-				projectiles[projectileIndex].y = gunPos.y * 256;
+				projectiles[projectileIndex].x = (cosine[projectiles[projectileIndex].angle] * 155) + (116 * 256);
+				projectiles[projectileIndex].y = (-sine[projectiles[projectileIndex].angle] * 155) + (252 * 256);
 				
 				*projectiles[projectileIndex].data.attribute0 = PROJECTILEATTRIBUTE0 | (projectiles[projectileIndex].y >> 8);
 				*projectiles[projectileIndex].data.attribute1 = PROJECTILEATTRIBUTE1 | (projectiles[projectileIndex].x >> 8);
@@ -325,8 +325,8 @@ void railGame(void)
 			{
 				if(projectiles[i].enabled)
 				{
-					projectiles[i].y -= sine[projectiles[i].angle];
-					projectiles[i].x += cosine[projectiles[i].angle];
+					projectiles[i].y -= sine[projectiles[i].angle] * 2;
+					projectiles[i].x += cosine[projectiles[i].angle] * 2;
 					
 					if(projectiles[i].y > (160 * 256) || projectiles[i].x > (240 * 256) || projectiles[i].y < 0 || projectiles[i].x < 0)
 					{
