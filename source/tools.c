@@ -74,42 +74,42 @@ void loadOBJsubPalette(const u32* data)
 	OBJpaletteIndex += SUBPALETTELENGTH;
 }
 
-void loadOBJtiles(const u32* data, u32 length){
+void loadOBJtiles(const u32* data){
 	u32 i;
 	
-	for(i = 0; i < length; i++)
+	for(i = 0; i < data[0]; i++)
 	{
-		OBJTILELOC[i + OBJindex] = data[i];
+		OBJTILELOC[i + OBJindex] = data[i + 4];
 	}
 	
-	OBJindex += length;
+	OBJindex += data[0];
 }
-void loadBGtiles(const u32* data, u32 length, u32* CBB){
+void loadBGtiles(const u32* data, u32* CBB){
 	u32 i;
 	
-	for(i = 0; i < length; i++)
+	for(i = 0; i < data[0]; i++)
 	{
-		CBB[i + BGindex] = data[i];
+		CBB[i + BGindex] = data[i + 1];
 	}
 	
-	BGindex += length;
+	BGindex += data[0];
 }
-void loadBGmap(const u32* data, u32 length, u32* SBB, u32 palette)
+void loadBGmap(const u32* data, u32* SBB, u32 palette)
 {
 	u32 i;
 	
-	for(i = 0; i < length; i++)
+	for(i = 0; i < data[0]; i++)
 	{
-		SBB[i] = (data[i] | (palette | (palette << 16)));
+		SBB[i] = (data[i + 1] | (palette | (palette << 16)));
 	}
 }
-void loadAFFmap(const u32* data, u32 length, u32* SBB)
+void loadAFFmap(const u32* data, u32* SBB)
 {
 	u32 i;
 	
-	for(i = 0; i < length; i++)
+	for(i = 0; i < data[0]; i++)
 	{
-		SBB[i] = data[i];
+		SBB[i] = data[i + 1];
 	}
 }
 

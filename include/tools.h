@@ -63,25 +63,37 @@ typedef struct rectangle{
 	u32 width;
 	u32 height;
 }rectangle;
+typedef struct circle{
+	point location;
+	u32 radius;
+}circle;
 
 extern u32        r                      (void);
+extern u32        getSeed                (void);
 extern void       setSeed                (u32);
+
 extern void       loadBGpalette          (const u32*);
-extern void       loadOBJpalette         (const u32*);
 extern void       loadBGsubPalette       (const u32*);
-extern void       loadOBJsubPalette      (const u32*);
-extern void       loadOBJtiles           (const u32*, u32);
-extern void       loadBGtiles            (const u32*, u32, u32*);
-extern void       loadBGmap              (const u32*, u32, u32*, u32);
-extern void       loadAFFmap             (const u32*, u32, u32*);
-extern void       OBJneutralTransform    (void);
+
+extern void       loadBGtiles            (const u32*, u32*);
 extern void       resetBGtilesLoad       (void);
-extern void       resetOBJtilesLoad      (void);
+
+extern void       loadBGmap              (const u32*, u32*, u32);
+extern void       loadAFFmap             (const u32*, u32*);
 extern void       resetBGmap             (u32*, u32);
+
+extern void       loadOBJpalette         (const u32*);
+extern void       loadOBJsubPalette      (const u32*);
+extern void       loadOBJtiles           (const u32*);
+extern void       resetOBJtilesLoad      (void);
+
 extern void       resetOAM               (void);
+
+extern void       OBJneutralTransform    (void);
+
 extern void       drawString             (const char*, u16*, u32, point, u32);
 extern void       drawChar               (char, u16*, u32, u32);
-extern u32        getSeed                (void);
+
 extern u16        keyCurrent,
                   keyPrevious;
 
