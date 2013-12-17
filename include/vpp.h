@@ -14,7 +14,9 @@ typedef struct asteroid{
 	u32 deltaAngle;
 }asteroid;
 
-#define PRESSSTARTRED 0x2D7F
+#define PRESSSTARTRED 	0x2D7F
+#define MAXGUNANGLE		716
+#define MINGUNANGLE		308
 
 void titleScreen(void);
 void gameScreen(void);

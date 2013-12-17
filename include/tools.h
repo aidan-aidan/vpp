@@ -102,18 +102,20 @@ extern u32	squareRoot			(u32 number);
 extern u16        keyCurrent,
                   keyPrevious;
 
-#define SCREENWIDTH          240
-#define SCREENHEIGHT         160
-#define SCREENWIDTHTILE      30
-#define SCREENHEIGHTTILE     20
-#define TILEWIDTH            8
-#define TILEHEIGHT           8
-#define CIRCLE_DIVISION      2048
-#define SPRITEWIDTH			 4
-#define SPRITEHEIGHT		 5
-#define ATTRIBUTE0			 1
-#define ATTRIBUTE1			 2
-#define ATTRIBUTE2			 3
+#define SCREENWIDTH			240
+#define SCREENHEIGHT		160
+#define SCREENWIDTHTILE		30
+#define SCREENHEIGHTTILE	20
+#define TILEWIDTH			8
+#define TILEHEIGHT			8
+#define CIRCLE_DIVISION		2048
+#define SPRITEWIDTH			4
+#define SPRITEHEIGHT		5
+#define ATTRIBUTE0			1
+#define ATTRIBUTE1			2
+#define ATTRIBUTE2			3
+#define MAXSPRITEX			511
+#define MAXSPRITEY			255
 
 #define MODE0                0x0000
 #define MODE1                0x0001
