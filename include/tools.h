@@ -23,6 +23,7 @@ typedef struct sprite{
 	u16*  attribute1;
 	u16*  attribute2;
 	point location;
+	u32   enabled;
 }sprite;
 typedef struct affSprite{
 	u16*  attribute0;
@@ -38,6 +39,7 @@ typedef struct affSprite{
 	s32   pdD;
 	u32   angle;
 	point location;
+	u32   enabled;
 }affSprite;
 typedef struct affBG{
 	u16*  			attribute0;
@@ -55,7 +57,7 @@ typedef struct affBG{
 	s32   			pcD;
 	s32   			pdD;
 	u32   			angle;
-	point 			locationScr;
+	point 			screenLocation;
 	point 			locationTex;
 }affBG;
 typedef struct rectangle{
@@ -68,31 +70,34 @@ typedef struct circle{
 	u32 radius;
 }circle;
 
-extern u32        r                      (void);
-extern u32        getSeed                (void);
-extern void       setSeed                (u32);
+extern u32	r                	(void);
+extern u32	getSeed           	(void);
+extern void	setSeed           	(u32);
 
-extern void       loadBGpalette          (const u32*);
-extern void       loadBGsubPalette       (const u32*);
+extern void	loadBGpalette      	(const u32*);
+extern void	loadBGsubPalette  	(const u32*);
 
-extern void       loadBGtiles            (const u32*, u32*);
-extern void       resetBGtilesLoad       (void);
+extern void	loadBGtiles       	(const u32*, u32*);
+extern void	resetBGtilesLoad   	(void);
 
-extern void       loadBGmap              (const u32*, u32*, u32);
-extern void       loadAFFmap             (const u32*, u32*);
-extern void       resetBGmap             (u32*, u32);
+extern void	loadBGmap        	(const u32*, u32*, u32);
+extern void	loadAFFmap        	(const u32*, u32*);
+extern void	resetBGmap       	(u32*, u32);
 
-extern void       loadOBJpalette         (const u32*);
-extern void       loadOBJsubPalette      (const u32*);
-extern void       loadOBJtiles           (const u32*);
-extern void       resetOBJtilesLoad      (void);
+extern void	loadOBJpalette   	(const u32*);
+extern void	loadOBJsubPalette 	(const u32*);
+extern void	loadOBJtiles      	(const u32*);
+extern void	resetOBJtilesLoad  	(void);
 
-extern void       resetOAM               (void);
+extern void	resetOAM         	(void);
 
-extern void       OBJneutralTransform    (void);
+extern void	OBJneutralTransform	(void);
 
-extern void       drawString             (const char*, u16*, u32, point, u32);
-extern void       drawChar               (char, u16*, u32, u32);
+extern void	drawString      	(const char*, u16*, u32, point, u32);
+extern void	drawChar          	(char, u16*, u32, u32);
+
+extern s32	power				(s32 base, u32 exponent);
+extern u32	squareRoot			(u32 number);
 
 extern u16        keyCurrent,
                   keyPrevious;
@@ -104,6 +109,11 @@ extern u16        keyCurrent,
 #define TILEWIDTH            8
 #define TILEHEIGHT           8
 #define CIRCLE_DIVISION      2048
+#define SPRITEWIDTH			 4
+#define SPRITEHEIGHT		 5
+#define ATTRIBUTE0			 1
+#define ATTRIBUTE1			 2
+#define ATTRIBUTE2			 3
 
 #define MODE0                0x0000
 #define MODE1                0x0001
@@ -205,8 +215,42 @@ extern u16        keyCurrent,
 #define PALETTE14            0xE000
 #define PALETTE15            0xF000
 
+#define AFFPARAM0			 0x0000
+#define AFFPARAM1			 0x0200
+#define AFFPARAM2			 0x0400
+#define AFFPARAM3			 0x0600
+#define AFFPARAM4			 0x0800
+#define AFFPARAM5			 0x0A00
+#define AFFPARAM6			 0x0C00
+#define AFFPARAM7			 0x0E00
+#define AFFPARAM8			 0x1000
+#define AFFPARAM9			 0x1200
+#define AFFPARAM10			 0x1400
+#define AFFPARAM11			 0x1600
+#define AFFPARAM12			 0x1800
+#define AFFPARAM13			 0x1A00
+#define AFFPARAM14			 0x1C00
+#define AFFPARAM15			 0x1E00
+#define AFFPARAM16			 0x2000
+#define AFFPARAM17			 0x2200
+#define AFFPARAM18			 0x2400
+#define AFFPARAM19			 0x2600
+#define AFFPARAM20			 0x2800
+#define AFFPARAM21			 0x2A00
+#define AFFPARAM22			 0x2C00
+#define AFFPARAM23			 0x2E00
+#define AFFPARAM24			 0x3000
+#define AFFPARAM25			 0x3200
+#define AFFPARAM26			 0x3400
+#define AFFPARAM27			 0x3600
+#define AFFPARAM28			 0x3800
+#define AFFPARAM29			 0x3A00
+#define AFFPARAM30			 0x3C00
+#define AFFPARAM31			 0x3E00
+
 #define VFLIP                0x0800
 #define HFLIP                0x0400
+#define DOUBLESIZE           0x0200
 
 #define SOUND_HVOLUME100     0x0002
 #define SOUND_HAVOLUME100    0x0004
@@ -429,10 +473,13 @@ INLINE void keyPoll(){
     keyCurrent = ~KEYINPUT;
 }
 
-INLINE void setBGswatch(u32 x, u32 y, u32 value){BGPALU16[y * 16 + x] = (u16)value;}
-INLINE void setOBJswatch(u32 x, u32 y, u32 value){OBJPALU16[y * 16 + x] = (u16)value;}
-INLINE u32 keyPress(u32 key){return((keyCurrent & ~keyPrevious) & key);}
-INLINE u32 keyDown(u32 key){return(keyCurrent & key);}
+INLINE void setBGswatch 	(u32 x, u32 y, u32 value)	{BGPALU16[y * 16 + x] = (u16)value;}
+INLINE void setOBJswatch	(u32 x, u32 y, u32 value)	{OBJPALU16[y * 16 + x] = (u16)value;}
+INLINE u32  keyPress    	(u32 key)                	{return((keyCurrent & ~keyPrevious) & key);}
+INLINE u32  keyDown     	(u32 key)                	{return(keyCurrent & key);}
+INLINE u32	square			(u32 base)					{return(base * base);}
+INLINE s32  spriteCenterX	(const u32* sprite)			{return((sprite[SPRITEWIDTH]  >> 1) + (((sprite[ATTRIBUTE0] & DOUBLESIZE) >> 9) * (sprite[SPRITEWIDTH]  >> 1)));}
+INLINE s32	spriteCenterY	(const u32* sprite)			{return((sprite[SPRITEHEIGHT] >> 1) + (((sprite[ATTRIBUTE0] & DOUBLESIZE) >> 9) * (sprite[SPRITEHEIGHT] >> 1)));}
 
 
 

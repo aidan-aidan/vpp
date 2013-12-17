@@ -79,7 +79,7 @@ void loadOBJtiles(const u32* data){
 	
 	for(i = 0; i < data[0]; i++)
 	{
-		OBJTILELOC[i + OBJindex] = data[i + 4];
+		OBJTILELOC[i + OBJindex] = data[i + 6];
 	}
 	
 	OBJindex += data[0];
@@ -164,6 +164,41 @@ void drawString(const char* string, u16* SBB, u32 length, point location, u32 pa
 void drawChar(char character, u16* SBB, u32 x, u32 y)
 {
 	SBB[y * 32 + x] = (character - 32) | PALETTE15;
+}
+
+s32 power(s32 base, u32 exponent)
+{
+	u32 i, result = 1;
+	if(exponent == 0)
+	{
+		return 1;
+	}
+	for(i = 0; i < exponent; i++)
+	{
+		result *= base;
+	}
+	return result;
+}
+u32 squareRoot(u32 number)
+{
+	u32 res = 0;
+    u32 one = 1 << 30;
+    
+    while(one > number)
+    {
+        one >>= 2;
+    }
+    while(one != 0)
+    {
+        if(number >= res + one)
+        {
+            number = number - (res + one);
+            res = res + 2 * one;
+        }
+        res >>= 1;
+        one >>= 2;
+    }
+    return res;
 }
 
 const s32 sine[CIRCLE_DIVISION] __attribute__((aligned(4)))={

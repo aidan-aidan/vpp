@@ -7,10 +7,12 @@
 
 typedef struct projectile{
 	sprite data;
-	point location;
-	u32 enabled;
 	u32 angle;
 }projectile;
+typedef struct asteroid{
+	affSprite data;
+	u32 deltaAngle;
+}asteroid;
 
 #define PRESSSTARTRED 0x2D7F
 
