@@ -18,17 +18,7 @@ typedef struct point{
 	s32 x;
 	s32 y;
 }point;
-typedef struct sprite{
-	u16*  attribute0;
-	u16*  attribute1;
-	u16*  attribute2;
-	point location;
-	u32   enabled;
-}sprite;
 typedef struct affBG{
-	u16*  			attribute0;
-	u16*  			attribute1;
-	u16*  			attribute2;
 	volatile u16* 	pa;
 	volatile u16* 	pb;
 	volatile u16* 	pc;
@@ -44,11 +34,6 @@ typedef struct affBG{
 	point 			screenLocation;
 	point 			locationTex;
 }affBG;
-typedef struct rectangle{
-	point location;
-	u32 width;
-	u32 height;
-}rectangle;
 typedef struct circle{
 	point location;
 	u32 radius;
@@ -69,6 +54,21 @@ typedef struct affSprite{
 	circle	definition;
 	u32		enabled;
 }affSprite;
+typedef struct sprite{
+	u16*	attribute0;
+	u16*	attribute1;
+	u16*	attribute2;
+	circle	definition;
+	u32		enabled;
+}sprite;
+
+#define N              (624)
+#define M              (397)
+#define K              (0x9908B0DFU)
+#define hiBit(u)       ((u) & 0x80000000U)
+#define loBit(u)       ((u) & 0x00000001U)
+#define loBits(u)      ((u) & 0x7FFFFFFFU)
+#define mixBits(u, v)  (hiBit(u)|loBits(v))
 
 extern u32	r                	(void);
 extern u32	getSeed           	(void);
@@ -95,6 +95,8 @@ extern void	OBJneutralTransform	(void);
 
 extern void	drawString      	(const char*, u16*, u32, point, u32);
 extern void	drawChar          	(char, u16*, u32, u32);
+
+extern u32	circle_circle		(circle, circle);
 
 extern s32	power				(s32 base, u32 exponent);
 extern u32	squareRoot			(u32 number);
@@ -143,6 +145,11 @@ extern u16        keyCurrent,
 #define BG_AFF_32X32         0x4000
 #define BG_AFF_64X64         0x8000
 #define BG_AFF_128X128       0xC000
+
+#define BGPRIORITY0			 0x0000
+#define BGPRIORITY1			 0x0001
+#define BGPRIORITY2			 0x0002
+#define BGPRIORITY3			 0x0003
 
 #define CHARBLOCK_LENGTH     0x4000
 #define SCREENBLOCK_LENGTH   0x0800

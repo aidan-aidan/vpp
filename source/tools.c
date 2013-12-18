@@ -1,36 +1,88 @@
 #include <..\include\tools.h>
 
 
-static u32 output = 0xAF2BB575,
-           BGindex = 0,
+static u32 BGindex = 0,
 		   OBJindex = 0,
 		   OBJpaletteIndex = 0,
 		   BGpaletteIndex = 0;
 
-u32 mask31 = 0x80000000,
-    mask21 = 0x00200000,
-	mask1 = 0x00000002,
-	mask0 = 0x00000001,
-	input;
+u32		state[N+1];
+u32*	next;
+s32		left;
+s32 	do_regen;
 
 u16 keyCurrent = 0,
     keyPrevious = 0;
 
-u32 getSeed(void)
-{
-	return output;
-}
 void setSeed(u32 seed)
 {
-	output = seed;
+   u32	x	= (seed | 0x1) & 0xFFFFFFFF;
+   u32*	s	= state;
+   u32	j	= N;
+   left 	= 0;
+   *s++		= x;
+   
+   while(--j)
+   {
+      x *= 69069;
+      *s = ( x & 0xFFFFFFFF );
+      s++;
+   }
+
+   do_regen = 1;
 }
-u32 r(void)
+u32 reloadMT()
 {
-	input = (((((((mask0 & output) << 1) ^ (mask1 & output)) << 20) ^ (mask21 & output)) << 10) ^ (mask31 & output));
-	output = (output >> 1);
-	output = (output | input);
-	
-	return output;
+   u32*	p0 = state;
+   u32*	p2 = state + 2;
+   u32*	pM = state + M;
+   u32	s0;
+   u32	s1;
+   int	j;
+   
+   if(left < -1)setSeed(4357U);
+   
+   left = N-1;
+   next = &(state[1]);
+   
+   for(s0 = state[0], s1 = state[1], j = ( N-M+1 ); --j; s0 = s1, s1 = *p2++)
+      *p0++ = (*pM++ ^ (mixBits(s0, s1) >> 1) ^ (loBit(s1) ? K : 0));
+   
+   for(pM = state, j = M; --j; s0 = s1, s1 = *p2++)
+      *p0++ = (*pM++ ^ ( mixBits(s0, s1) >> 1 ) ^ ( loBit(s1) ? K : 0 ));
+   
+   s1	=	state[0];
+   *p0	=	(*pM ^ ( mixBits( s0, s1 ) >> 1 ) ^ ( loBit( s1 ) ? K : 0 ));
+   s1	^=	(s1 >> 11 );
+   s1	^=	(s1 <<  7 ) & 0x9D2C5680U;
+   s1	^=	(s1 << 15 ) & 0xEFC60000U;
+   return	( s1 ^ ( s1 >> 18 ));
+}
+u32 r()
+{
+   u32 y;
+   
+   left--;
+   if(left < 0) 
+   {
+      if(do_regen == 1)
+      {
+         return(reloadMT());
+      }
+	  else
+	  {
+         left = N-1;
+         next = &(state[1]);
+      }
+   }
+   
+   y  = *next;
+   next++;
+   y ^= (y >> 11);
+   y ^= (y <<  7) & 0x9D2C5680;
+   y ^= (y << 15) & 0xEFC60000;
+   y ^= (y >> 18);
+   return y;
 }
 
 void loadBGpalette(const u32* data)
@@ -164,6 +216,16 @@ void drawString(const char* string, u16* SBB, u32 length, point location, u32 pa
 void drawChar(char character, u16* SBB, u32 x, u32 y)
 {
 	SBB[y * 32 + x] = (character - 32) | PALETTE15;
+}
+
+u32 circle_circle(circle c1, circle c2)
+{
+	u32 hypotneuse = 0;
+	
+	hypotneuse = squareRoot(square((c1.location.x >> 8) - (c2.location.x >> 8)) + square((c1.location.y >> 8) - (c2.location.y >> 8)));
+	
+	if(hypotneuse < (c1.radius + c2.radius))return 1;
+	else return 0;
 }
 
 s32 power(s32 base, u32 exponent)

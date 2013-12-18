@@ -49,7 +49,7 @@ void titleScreen(void)
 			{
 				setSeed(time);
 				resetBGtilesLoad();
-				resetBGmap(SBB31_U32_LOC, BG32X32U32_LENGTH);
+				resetBGmap(SBB30_U32_LOC, BG64X32U32_LENGTH);
 				return;
 			}
 			
@@ -214,47 +214,54 @@ void gameScreen(void)
 void railGame(void)
 {
 	u32 i,
-		vBlankBool_A 							= 0,
-		vBlankBool_B 							= 0,
-		vBlankCount 							= 0,
-		projectileIndex 						= 0,
-		playerProjectileSpeed					= 2,
-		maxPlayerShots  						= 20,
-		gunAltitude								= 135,
-		gunSpeed 								= 4;
+		vBlankBool_A 			= 0,
+		vBlankBool_B 			= 0,
+		vBlankCount 			= 0,
+		projectileIndex 		= 0,
+		playerProjectileSpeed	= 2,
+		maxPlayerShots  		= 20,
+		gunAltitude				= 135,
+		gunSpeed 				= 4,
+		starXoffset				= 0;
 		
-	point 		offscreen						= {255 << 8, 255 << 8};
+	point 		offscreen	= {255 << 8, 255 << 8};
 		
-	affSprite  	gun    							= {&OAMLOC[120], &OAMLOC[121], &OAMLOC[122], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{0, 0}, gunTiles[SPRITEWIDTH] >> 1}, 1};
+	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{(255 << 8), (255 << 8)}, gunTiles[SPRITEWIDTH] >> 1}, 1};
 	
-	affBG      	earth							= {(u16*)0x00004000/*unused address*/, (u16*)0x00004004/*unused address*/, (u16*)0x00004008/*unused address*/, &BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
+	sprite		target		= {&OAMLOC[84], &OAMLOC[85], &OAMLOC[86], {{32 << 8, 32 << 8}, 16}, 1};
 	
-	circle     	earthBound 						= {earth.screenLocation, 128};
+	affBG      	earth		= {&BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
+	
+	circle     	earthBound 	= {earth.screenLocation, 128};
 	
 	projectile	playerProjectiles[maxPlayerShots];
 	
-	*gun.attribute0   							= gunTiles[ATTRIBUTE0];
-	*gun.attribute1   							= gunTiles[ATTRIBUTE1] | AFFPARAM0;
-	*gun.attribute2  							= gunTiles[ATTRIBUTE2];
-	*gun.pa = *gun.pd 							= gun.paD;
-	*gun.pb = *gun.pc 							= gun.pbD;
+	*gun.attribute0   		= gunTiles[ATTRIBUTE0];
+	*gun.attribute1   		= gunTiles[ATTRIBUTE1] | AFFPARAM0;
+	*gun.attribute2  		= gunTiles[ATTRIBUTE2];
+	*gun.pa = *gun.pd 		= gun.paD;
+	*gun.pb = *gun.pc 		= gun.pbD;
 	
-	*earth.pa = *earth.pd 						= earth.paD;
-	*earth.pb = *earth.pc 						= earth.pbD;
-	*earth.dx = *earth.dy 						= 0;
+	*target.attribute0		= circleTiles[ATTRIBUTE0] | ((target.definition.location.y >> 8) - spriteCenterY(&circleTiles[0]));
+	*target.attribute1		= circleTiles[ATTRIBUTE1] | ((target.definition.location.x >> 8) - spriteCenterX(&circleTiles[0]));
+	*target.attribute2		= circleTiles[ATTRIBUTE2];
+	
+	*earth.pa = *earth.pd 	= earth.paD;
+	*earth.pb = *earth.pc 	= earth.pbD;
+	*earth.dx = *earth.dy 	= 255 << 8;
 	
 	for(i = 0; i < maxPlayerShots; i++)
 	{
-		playerProjectiles[i].data.attribute0 	= &OAMLOC[i * 4];
-		playerProjectiles[i].data.attribute1 	= &OAMLOC[i * 4 + 1];
-		playerProjectiles[i].data.attribute2 	= &OAMLOC[i * 4 + 2];
+		playerProjectiles[i].data.attribute0 				= &OAMLOC[i * 4];
+		playerProjectiles[i].data.attribute1 				= &OAMLOC[i * 4 + 1];
+		playerProjectiles[i].data.attribute2 				= &OAMLOC[i * 4 + 2];
 		
-		playerProjectiles[i].data.location.x 	= 255 << 8;
-		playerProjectiles[i].data.location.y 	= 255 << 8;
+		playerProjectiles[i].data.definition.location.x	= 255 << 8;
+		playerProjectiles[i].data.definition.location.y 	= 255 << 8;
 		
-		*playerProjectiles[i].data.attribute0	= projectileTiles[ATTRIBUTE0] | (playerProjectiles[i].data.location.y >> 8);
-		*playerProjectiles[i].data.attribute1	= projectileTiles[ATTRIBUTE1] | (playerProjectiles[i].data.location.x >> 8);
-		*playerProjectiles[i].data.attribute2	= projectileTiles[ATTRIBUTE2];
+		*playerProjectiles[i].data.attribute0				= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));
+		*playerProjectiles[i].data.attribute1				= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].data.definition.location.x >> 8) - spriteCenterX(&projectileTiles[0]));
+		*playerProjectiles[i].data.attribute2				= projectileTiles[ATTRIBUTE2];
 	}
 	
 	loadBGpalette	(railGameBGpalette);
@@ -268,20 +275,20 @@ void railGame(void)
 	loadOBJtiles	(blank4bppSprite	);
 	loadOBJtiles	(gunTiles			);
 	loadOBJtiles	(projectileTiles	);
-	loadOBJtiles	(asteroidTiles		);
+	loadOBJtiles	(circleTiles		);
 	
 	for(i = 0; i < BG64X32U32_LENGTH; i++)
 	{
 		if(r() >> 25 < 32)
 		{
-			SBB29_U32_LOC[i] = (0);
+			SBB29_U32_LOC[i] = ((r() >> 27) | ((r() >> 30) << 10) | PALETTE1) | (((r() >> 27) | ((r() >> 30) << 10) | PALETTE1) << 16);
 		}
 	}
 	
 	DISPCNT		= 	(MODE1 | BG0_ENABLE	| BG1_ENABLE   | BG2_ENABLE | OBJ_ENABLE | OBJ1D);
-	BG0CNT  	= 	(CBB2  | SBB31 		| BG_REG_32X32 | BGCOLOR16);
-	BG1CNT  	= 	(CBB1  | SBB29 		| BG_REG_64X32 | BGCOLOR16);
-	*earth.cnt	= 	(CBB0  | SBB27 		| BG_AFF_64X64 | BGCOLOR256);
+	BG0CNT  	= 	(CBB2  | SBB31 		| BG_REG_32X32 | BGCOLOR16  | BGPRIORITY0);
+	BG1CNT  	= 	(CBB1  | SBB29 		| BG_REG_64X32 | BGCOLOR16  | BGPRIORITY2);
+	*earth.cnt	= 	(CBB0  | SBB27 		| BG_AFF_64X64 | BGCOLOR256 | BGPRIORITY1);
 		
 	while(1)
 	{
@@ -293,13 +300,13 @@ void railGame(void)
 			
 			if(keyDown(BUTTON_A) && (vBlankCount & 2) && (vBlankCount & 1))
 			{
-				playerProjectiles[projectileIndex].angle 				= gun.angle + ((r() >> 27) - 16);
-				playerProjectiles[projectileIndex].data.enabled 		= 1;
-				playerProjectiles[projectileIndex].data.location.x 		= (cosine[playerProjectiles[projectileIndex].angle] * gunAltitude) + ((earth.screenLocation.x - spriteCenterX(&projectileTiles[0])) << 8);
-				playerProjectiles[projectileIndex].data.location.y 		= (-sine[playerProjectiles[projectileIndex].angle] * gunAltitude) + (earth.screenLocation.y << 8);
+				playerProjectiles[projectileIndex].angle 						= gun.angle + ((r() >> 27) - 16);
+				playerProjectiles[projectileIndex].data.enabled 				= 1;
+				playerProjectiles[projectileIndex].data.definition.location.x 	= (cosine[playerProjectiles[projectileIndex].angle] * gunAltitude) + ((earth.screenLocation.x) << 8);
+				playerProjectiles[projectileIndex].data.definition.location.y 	= (-sine[playerProjectiles[projectileIndex].angle] * gunAltitude) + (earth.screenLocation.y << 8);
 				
-				*playerProjectiles[projectileIndex].data.attribute0	= projectileTiles[ATTRIBUTE0] | (playerProjectiles[projectileIndex].data.location.y >> 8);
-				*playerProjectiles[projectileIndex].data.attribute1	= projectileTiles[ATTRIBUTE1] | (playerProjectiles[projectileIndex].data.location.x >> 8);
+				*playerProjectiles[projectileIndex].data.attribute0				= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[projectileIndex].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));
+				*playerProjectiles[projectileIndex].data.attribute1				= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[projectileIndex].data.definition.location.x >> 8) - spriteCenterX(&projectileTiles[0]));
 				
 				projectileIndex++;
 				if(projectileIndex >= maxPlayerShots)
@@ -308,13 +315,13 @@ void railGame(void)
 				}
 			}
 			
-			if(keyDown(BUTTON_L))		{gun.angle += 	gunSpeed;}
-			if(keyDown(BUTTON_R))		{gun.angle -= 	gunSpeed;}
-			if(gun.angle > MAXGUNANGLE)	{gun.angle = 	MAXGUNANGLE;}
-			if(gun.angle < MINGUNANGLE)	{gun.angle = 	MINGUNANGLE;}
+			if(keyDown(BUTTON_L))		gun.angle += 	gunSpeed;
+			if(keyDown(BUTTON_R))		gun.angle -= 	gunSpeed;
+			if(gun.angle > MAXGUNANGLE)	gun.angle = 	MAXGUNANGLE;
+			if(gun.angle < MINGUNANGLE)	gun.angle = 	MINGUNANGLE;
 			
 			earth.angle++;
-			if(earth.angle >= CIRCLE_DIVISION){earth.angle = 0;}
+			if(earth.angle >= CIRCLE_DIVISION)earth.angle = 0;
 			
 			vBlankCount++;
 			
@@ -322,39 +329,45 @@ void railGame(void)
 			{
 				if(playerProjectiles[i].data.enabled)
 				{
-					playerProjectiles[i].data.location.y -= sine  [playerProjectiles[i].angle] * playerProjectileSpeed;
-					playerProjectiles[i].data.location.x += cosine[playerProjectiles[i].angle] * playerProjectileSpeed;
+					playerProjectiles[i].data.definition.location.y -= sine  [playerProjectiles[i].angle] * playerProjectileSpeed;
+					playerProjectiles[i].data.definition.location.x += cosine[playerProjectiles[i].angle] * playerProjectileSpeed;
 					
-					if(playerProjectiles[i].data.location.x < 0)
-					{
-						playerProjectiles[i].data.location.x = (MAXSPRITEX << 8) + playerProjectiles[i].data.location.x;
-					}
-					if(playerProjectiles[i].data.location.y < 0)
-					{
-						playerProjectiles[i].data.location.y = (MAXSPRITEY << 8) + playerProjectiles[i].data.location.y;
-					}
+					if(playerProjectiles[i].data.definition.location.x - (spriteCenterX(&projectileTiles[0]) << 8) < 0)
+					playerProjectiles[i].data.definition.location.x = (MAXSPRITEX << 8) + playerProjectiles[i].data.definition.location.x;
 					
-					if(playerProjectiles[i].data.location.y > (SCREENHEIGHT << 8) && playerProjectiles[i].data.location.y < (SCREENWIDTH << 8))
+					if(playerProjectiles[i].data.definition.location.y - (spriteCenterY(&projectileTiles[0]) << 8) < 0)
+					playerProjectiles[i].data.definition.location.y = (MAXSPRITEY << 8) + playerProjectiles[i].data.definition.location.y;
+					
+					if(playerProjectiles[i].data.definition.location.y > (SCREENHEIGHT << 8) && playerProjectiles[i].data.definition.location.y < (240 << 8))
 					{
 						playerProjectiles[i].data.enabled = 0;
 						
-						playerProjectiles[i].data.location = offscreen;
+						playerProjectiles[i].data.definition.location = offscreen;
 					}
 					
-					*playerProjectiles[i].data.attribute0 = projectileTiles[ATTRIBUTE0] | (playerProjectiles[i].data.location.y >> 8);
-					*playerProjectiles[i].data.attribute1 = projectileTiles[ATTRIBUTE1] | (playerProjectiles[i].data.location.x >> 8);
+					if(circle_circle(playerProjectiles[i].data.definition, target.definition))
+					{
+						playerProjectiles[i].data.enabled = 0;
+						
+						playerProjectiles[i].data.definition.location = offscreen;
+					}
+					
+					*playerProjectiles[i].data.attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));
+					*playerProjectiles[i].data.attribute1 = projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].data.definition.location.x >> 8) - spriteCenterX(&projectileTiles[0]));
 				}
 			}
 			
-			*gun.pa = *gun.pd = sine[gun.angle];
-			*gun.pb = cosine[gun.angle];
-			*gun.pc = -cosine[gun.angle];
+			BG1HOFS	= starXoffset++ >> 2;
 			
-			gun.definition.location.y = ((-sine[gun.angle] * gunAltitude) >> 8) + earth.screenLocation.y - spriteCenterY(&gunTiles[0]);
-			gun.definition.location.x = ((cosine[gun.angle] * gunAltitude) >> 8) + earth.screenLocation.x - spriteCenterX(&gunTiles[0]);
+			*gun.pa	= *gun.pd = sine[gun.angle];
+			*gun.pb	= cosine[gun.angle];
+			*gun.pc	= -cosine[gun.angle];
 			
-			*gun.attribute0 = gunTiles[1] | gun.definition.location.y;
-			*gun.attribute1 = gunTiles[2] | gun.definition.location.x;
+			gun.definition.location.y = (-sine[gun.angle] * gunAltitude) 	+ (earth.screenLocation.y << 8);
+			gun.definition.location.x = (cosine[gun.angle] * gunAltitude) 	+ (earth.screenLocation.x << 8);
+			
+			*gun.attribute0 = gunTiles[1] | ((gun.definition.location.y >> 8) - spriteCenterY(&gunTiles[0]));
+			*gun.attribute1 = gunTiles[2] | ((gun.definition.location.x >> 8) - spriteCenterX(&gunTiles[0]));
 			
 			earth.paD = earth.pdD =	cosine[earth.angle];
 			earth.pbD = 			-sine[earth.angle];

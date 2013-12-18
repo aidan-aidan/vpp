@@ -9,10 +9,6 @@ typedef struct projectile{
 	sprite data;
 	u32 angle;
 }projectile;
-typedef struct asteroid{
-	affSprite data;
-	u32 deltaAngle;
-}asteroid;
 
 #define PRESSSTARTRED 	0x2D7F
 #define MAXGUNANGLE		716
