@@ -25,22 +25,6 @@ typedef struct sprite{
 	point location;
 	u32   enabled;
 }sprite;
-typedef struct affSprite{
-	u16*  attribute0;
-	u16*  attribute1;
-	u16*  attribute2;
-	u16*  pa;
-	u16*  pb;
-	u16*  pc;
-	u16*  pd;
-	s32   paD;
-	s32   pbD;
-	s32   pcD;
-	s32   pdD;
-	u32   angle;
-	point location;
-	u32   enabled;
-}affSprite;
 typedef struct affBG{
 	u16*  			attribute0;
 	u16*  			attribute1;
@@ -69,6 +53,22 @@ typedef struct circle{
 	point location;
 	u32 radius;
 }circle;
+typedef struct affSprite{
+	u16*	attribute0;
+	u16*	attribute1;
+	u16*	attribute2;
+	u16*	pa;
+	u16*	pb;
+	u16*	pc;
+	u16*	pd;
+	s32		paD;
+	s32		pbD;
+	s32		pcD;
+	s32		pdD;
+	u32   	angle;
+	circle	definition;
+	u32		enabled;
+}affSprite;
 
 extern u32	r                	(void);
 extern u32	getSeed           	(void);

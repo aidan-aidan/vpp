@@ -218,17 +218,16 @@ void railGame(void)
 		vBlankBool_B 							= 0,
 		vBlankCount 							= 0,
 		projectileIndex 						= 0,
-		playerProjectileSpeed						= 2,
+		playerProjectileSpeed					= 2,
 		maxPlayerShots  						= 20,
 		gunAltitude								= 135,
 		gunSpeed 								= 4;
 		
 	point 		offscreen						= {255 << 8, 255 << 8};
 		
-	affSprite  	gun    							= {&OAMLOC[120], &OAMLOC[121], &OAMLOC[122], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {0, 0}, r() >> 28};
-	asteroid	asteroids						= {{&OAMLOC[124], &OAMLOC[125], &OAMLOC[126], &OAMLOC[19], &OAMLOC[23], &OAMLOC[27], &OAMLOC[31], 256, 0, 0, 256, 0, {255, 255}, 0}, 12};
-				
-	affBG      	earth							= {(u16*)0x00004000, (u16*)0x00004004, (u16*)0x00004008, &BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
+	affSprite  	gun    							= {&OAMLOC[120], &OAMLOC[121], &OAMLOC[122], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{0, 0}, gunTiles[SPRITEWIDTH] >> 1}, 1};
+	
+	affBG      	earth							= {(u16*)0x00004000/*unused address*/, (u16*)0x00004004/*unused address*/, (u16*)0x00004008/*unused address*/, &BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
 	
 	circle     	earthBound 						= {earth.screenLocation, 128};
 	
@@ -240,28 +239,22 @@ void railGame(void)
 	*gun.pa = *gun.pd 							= gun.paD;
 	*gun.pb = *gun.pc 							= gun.pbD;
 	
-	*asteroids.data.attribute0					= asteroidTiles[ATTRIBUTE0] | asteroids.data.location.y;
-	*asteroids.data.attribute1					= asteroidTiles[ATTRIBUTE1] | AFFPARAM1 | asteroids.data.location.x;
-	*asteroids.data.attribute2					= asteroidTiles[ATTRIBUTE2];
-	*asteroids.data.pa = *asteroids.data.pd	= asteroids.data.paD;
-	*asteroids.data.pb = *asteroids.data.pc	= asteroids.data.pbD;
-	
 	*earth.pa = *earth.pd 						= earth.paD;
 	*earth.pb = *earth.pc 						= earth.pbD;
 	*earth.dx = *earth.dy 						= 0;
 	
 	for(i = 0; i < maxPlayerShots; i++)
 	{
-		playerProjectiles[i].data.attribute0 		= &OAMLOC[i * 4];
-		playerProjectiles[i].data.attribute1 		= &OAMLOC[i * 4 + 1];
-		playerProjectiles[i].data.attribute2 		= &OAMLOC[i * 4 + 2];
+		playerProjectiles[i].data.attribute0 	= &OAMLOC[i * 4];
+		playerProjectiles[i].data.attribute1 	= &OAMLOC[i * 4 + 1];
+		playerProjectiles[i].data.attribute2 	= &OAMLOC[i * 4 + 2];
 		
-		playerProjectiles[i].data.location.x 		= 255 << 8;
-		playerProjectiles[i].data.location.y 		= 255 << 8;
+		playerProjectiles[i].data.location.x 	= 255 << 8;
+		playerProjectiles[i].data.location.y 	= 255 << 8;
 		
-		*playerProjectiles[i].data.attribute0		= projectileTiles[ATTRIBUTE0] | (playerProjectiles[i].data.location.y >> 8);
-		*playerProjectiles[i].data.attribute1		= projectileTiles[ATTRIBUTE1] | (playerProjectiles[i].data.location.x >> 8);
-		*playerProjectiles[i].data.attribute2		= projectileTiles[ATTRIBUTE2];
+		*playerProjectiles[i].data.attribute0	= projectileTiles[ATTRIBUTE0] | (playerProjectiles[i].data.location.y >> 8);
+		*playerProjectiles[i].data.attribute1	= projectileTiles[ATTRIBUTE1] | (playerProjectiles[i].data.location.x >> 8);
+		*playerProjectiles[i].data.attribute2	= projectileTiles[ATTRIBUTE2];
 	}
 	
 	loadBGpalette	(railGameBGpalette);
@@ -315,33 +308,6 @@ void railGame(void)
 				}
 			}
 			
-			if(!asteroids.data.enabled)
-			{
-				if(r() >> 24 == 34)
-				{
-					asteroids.data.enabled = 1;
-					
-					asteroids.data.location.x = (r() >> 28) * 16;
-					
-					asteroids.data.location.y = 322;
-					
-					*asteroids.data.attribute0 = asteroidTiles[ATTRIBUTE0] | asteroids.data.location.y;
-					*asteroids.data.attribute1 = asteroidTiles[ATTRIBUTE1] | asteroids.data.location.x | AFFPARAM1;
-				}
-				
-			}
-			if(asteroids.data.enabled)
-			{
-				asteroids.data.location.y++;
-				
-				if(asteroids.data.location.y > 511)
-				{
-					asteroids.data.location.y = 0;
-				}
-				
-				*asteroids.data.attribute0 = asteroidTiles[ATTRIBUTE0] | (asteroids.data.location.y >> 1);
-			}
-			
 			if(keyDown(BUTTON_L))		{gun.angle += 	gunSpeed;}
 			if(keyDown(BUTTON_R))		{gun.angle -= 	gunSpeed;}
 			if(gun.angle > MAXGUNANGLE)	{gun.angle = 	MAXGUNANGLE;}
@@ -349,9 +315,6 @@ void railGame(void)
 			
 			earth.angle++;
 			if(earth.angle >= CIRCLE_DIVISION){earth.angle = 0;}
-			
-			asteroids.data.angle += asteroids.deltaAngle;
-			if(asteroids.data.angle >= CIRCLE_DIVISION){asteroids.data.angle = 0;}
 			
 			vBlankCount++;
 			
@@ -387,11 +350,11 @@ void railGame(void)
 			*gun.pb = cosine[gun.angle];
 			*gun.pc = -cosine[gun.angle];
 			
-			gun.location.y = ((-sine[gun.angle] * gunAltitude) >> 8) + earth.screenLocation.y - spriteCenterY(&gunTiles[0]);
-			gun.location.x = ((cosine[gun.angle] * gunAltitude) >> 8) + earth.screenLocation.x - spriteCenterX(&gunTiles[0]);
+			gun.definition.location.y = ((-sine[gun.angle] * gunAltitude) >> 8) + earth.screenLocation.y - spriteCenterY(&gunTiles[0]);
+			gun.definition.location.x = ((cosine[gun.angle] * gunAltitude) >> 8) + earth.screenLocation.x - spriteCenterX(&gunTiles[0]);
 			
-			*gun.attribute0 = gunTiles[1] | gun.location.y;
-			*gun.attribute1 = gunTiles[2] | gun.location.x;
+			*gun.attribute0 = gunTiles[1] | gun.definition.location.y;
+			*gun.attribute1 = gunTiles[2] | gun.definition.location.x;
 			
 			earth.paD = earth.pdD =	cosine[earth.angle];
 			earth.pbD = 			-sine[earth.angle];
@@ -404,14 +367,6 @@ void railGame(void)
 			*earth.pb = earth.pbD;
 			*earth.pc = earth.pcD;
 			*earth.pd = earth.pdD;
-			
-			asteroids.data.paD = asteroids.data.pdD		= sine[asteroids.data.angle];
-			asteroids.data.pbD							= cosine[asteroids.data.angle];
-			asteroids.data.pcD							= -cosine[asteroids.data.angle];
-			
-			*asteroids.data.pa = *asteroids.data.pd	= asteroids.data.paD;
-			*asteroids.data.pb 							= asteroids.data.pbD;
-			*asteroids.data.pc 							= asteroids.data.pcD;
 		}
 		
 		vBlankBool_B = vBlankBool_A;
