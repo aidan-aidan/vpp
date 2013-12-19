@@ -350,6 +350,8 @@ void railGame(void)
 						playerProjectiles[i].data.enabled = 0;
 						
 						playerProjectiles[i].data.definition.location = offscreen;
+						
+						*target.attribute0 = (circleTiles[ATTRIBUTE0] ^ (PALETTE15 & circleTiles[ATTRIBUTE0]));
 					}
 					
 					*playerProjectiles[i].data.attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));

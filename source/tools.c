@@ -120,7 +120,7 @@ void loadOBJsubPalette(const u32* data)
 	
 	for(i = 0; i < SUBPALETTELENGTH; i++)
 	{
-		OBJPAL[i] = data[i];
+		OBJPAL[i + OBJpaletteIndex] = data[i];
 	}
 	
 	OBJpaletteIndex += SUBPALETTELENGTH;
