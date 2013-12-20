@@ -35,7 +35,7 @@ typedef struct affBG{
 	point 			locationTex;
 }affBG;
 typedef struct circle{
-	point location;
+	point center;
 	u32 radius;
 }circle;
 typedef struct affSprite{
@@ -53,6 +53,7 @@ typedef struct affSprite{
 	u32   	angle;
 	circle	definition;
 	u32		enabled;
+	u32		hit;
 }affSprite;
 typedef struct sprite{
 	u16*	attribute0;
@@ -60,6 +61,7 @@ typedef struct sprite{
 	u16*	attribute2;
 	circle	definition;
 	u32		enabled;
+	u32		hit;
 }sprite;
 
 #define N              (624)

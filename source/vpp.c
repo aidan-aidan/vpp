@@ -26,14 +26,14 @@ void titleScreen(void)
 	BG0CNT  = (CBB0  | SBB31      | BGCOLOR16  | BG_REG_32X32);
 	BG1CNT  = (CBB1  | SBB30      | BGCOLOR256 | BG_REG_32X32);
 	
-	loadBGpalette   (&titleScreenPalette[0]);
-	loadBGtiles     (&blank8bppTile[0], CBB1_U32_LOC);
-	loadBGtiles     (&titleScreenTiles[0], CBB1_U32_LOC);
-	loadBGmap       (&titleScreenMap[0], SBB30_U32_LOC, 0);
+	loadBGpalette   (titleScreenPalette);
+	loadBGtiles     (blank8bppTile, CBB1_U32_LOC);
+	loadBGtiles     (titleScreenTiles, CBB1_U32_LOC);
+	loadBGmap       (titleScreenMap, SBB30_U32_LOC, 0);
 	resetBGtilesLoad();
-	loadBGtiles     (&dosFontTiles[0], CBB0_U32_LOC);
+	loadBGtiles     (dosFontTiles, CBB0_U32_LOC);
 	
-	drawDOS(&pressStart[0], SBB31_U16_LOC, PRESSSTARTLENGTH, pressStartPos, PALETTE15);
+	drawDOS(pressStart, SBB31_U16_LOC, PRESSSTARTLENGTH, pressStartPos, PALETTE15);
 	
 	while(1)
 	{
@@ -72,68 +72,43 @@ void titleScreen(void)
 void gameScreen(void)
 {
 	u32 i,
-		vBlankBool_A = 0,
-		vBlankBool_B = 0;
+		vBlankBool_A	= 0,
+		vBlankBool_B	= 0,
+		shipTurnSpeed	= 15;
 	
-	s32	shipAngle    = 0;
+	s32	shipMaxSpeed = 32768;
 	
 	point starOffset       = {0, 0},
-	      playerPos        = {104, 48},
 		  shipAcceleration = {0, 0};
 		  
-	sprite playerShip = {&OAMLOC[0],
-						 &OAMLOC[1],
-						 &OAMLOC[2]};
+	affSprite playerShip = {&OAMLOC[0], &OAMLOC[1], &OAMLOC[2], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 0, {{120 << 8, 80 << 8}, 6}, 1};
 						 
-	*playerShip.attribute0 = (shipTiles[1] | playerPos.y);
-	*playerShip.attribute1 = (shipTiles[2] | playerPos.x);
-	*playerShip.attribute2 = (shipTiles[3]);
-	
-	OAMLOC[3] = OAMLOC[15] = 256;
-	OAMLOC[7] = OAMLOC[11] = 0;
+	*playerShip.attribute0			= (shipTiles[ATTRIBUTE0] | ((playerShip.definition.center.y >> 8) - spriteCenterY(shipTiles)));
+	*playerShip.attribute1			= (shipTiles[ATTRIBUTE1] | ((playerShip.definition.center.x >> 8) - spriteCenterX(shipTiles)));
+	*playerShip.attribute2			= (shipTiles[ATTRIBUTE2]);
+	*playerShip.pa = *playerShip.pd	= playerShip.paD;
+	*playerShip.pb = *playerShip.pc	= playerShip.pbD;
 		
 	DISPCNT = (MODE0 | OBJ1D | BG0_ENABLE | BG1_ENABLE | BG2_ENABLE | BG3_ENABLE | OBJ_ENABLE);
 	
-	BG0CNT  = (CBB0  | SBB31      | BGCOLOR16  | BG_REG_32X32);
-	BG1CNT  = (CBB1  | SBB27      | BGCOLOR16  | BG_REG_64X64);
-	BG2CNT  = (CBB1  | SBB23      | BGCOLOR16  | BG_REG_64X64);
-	BG3CNT  = (CBB1  | SBB19      | BGCOLOR16  | BG_REG_64X64);
+	BG0CNT  = (CBB0	| SBB31	| BGCOLOR16	| BG_REG_32X32);
+	BG1CNT  = (CBB1	| SBB27	| BGCOLOR16	| BG_REG_64X64);
+	BG2CNT  = (CBB1	| SBB23	| BGCOLOR16	| BG_REG_64X64);
+	BG3CNT  = (CBB1	| SBB19	| BGCOLOR16	| BG_REG_64X64);
 	
-	loadBGpalette   (&gameScreenBGpalette[0]);
-	loadBGtiles     (&blank4bppTile[0], CBB1_U32_LOC);
-	loadBGtiles     (&starTiles[0], CBB1_U32_LOC);
+	loadBGpalette   (gameScreenBGpalette);
+	loadBGtiles     (blank4bppTile, CBB1_U32_LOC);
+	loadBGtiles     (starTiles, CBB1_U32_LOC);
 	resetBGtilesLoad();
-	loadBGtiles     (&dosFontTiles[0], CBB0_U32_LOC);
-	loadOBJpalette  (&gameScreenOBJpalette[0]);
-	loadOBJtiles    (&blank8bppSprite[0]);
-	loadOBJtiles    (&shipTiles[0]);
+	loadBGtiles     (dosFontTiles, CBB0_U32_LOC);
+	loadOBJpalette  (gameScreenOBJpalette);
+	loadOBJtiles    (blank8bppSprite);
+	loadOBJtiles    (shipTiles);
 	
-	for(i = 0; i < BG64X64U32_LENGTH; i++)
+	for(i = 0; i < BG64X64U32_LENGTH * 3; i++)
 	{
-		if((r() >> 25) < 20)
-		{
-			SBB19_U32_LOC[i] = (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) | (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) << 16));
-		}
-		else
-		{
-			SBB19_U32_LOC[i] = 0;
-		}
-		if((r() >> 25) < 20)
-		{
-			SBB23_U32_LOC[i] = (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) | (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) << 16));
-		}
-		else
-		{
-			SBB23_U32_LOC[i] = 0;
-		}
-		if((r() >> 25) < 20)
-		{
-			SBB27_U32_LOC[i] = (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) | (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) << 16));
-		}
-		else
-		{
-			SBB27_U32_LOC[i] = 0;
-		}
+		if((r() >> 25) < 20)SBB19_U32_LOC[i] = (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) | (((r() >> 27) | PALETTE14 | ((r() >> 30) << 10)) << 16));
+		else SBB19_U32_LOC[i] = 0;
 	}
 	
 	while(1)
@@ -146,58 +121,35 @@ void gameScreen(void)
 			
 			if(keyDown(BUTTON_B))
 			{
-				shipAcceleration.x += sine[shipAngle];
-				shipAcceleration.y += -cosine[shipAngle];
+				shipAcceleration.x += sine[playerShip.angle];
+				shipAcceleration.y += -cosine[playerShip.angle];
 			}
 			if(keyDown(BUTTON_A))
 			{
 				shipAcceleration.x >>= 1;
 				shipAcceleration.y >>= 1;
 			}
-			if(keyDown(BUTTON_L))
-			{
-				shipAngle -= 15;
-			}
-			if(keyDown(BUTTON_R))
-			{
-				shipAngle += 15;
-			}
 			
-			if(shipAngle > CIRCLE_DIVISION - 1)
-			{
-				shipAngle = 0;
-			}
-			if(shipAngle < 0)
-			{
-				shipAngle = CIRCLE_DIVISION - 1;
-			}
+			if(keyDown(BUTTON_L))playerShip.angle -= shipTurnSpeed;
+			if(keyDown(BUTTON_R))playerShip.angle += shipTurnSpeed;
 			
-			if(shipAcceleration.x > 32768)
-			{
-				shipAcceleration.x = 32768;
-			}
-			if(shipAcceleration.y > 32768)
-			{
-				shipAcceleration.y = 32768;
-			}
-			if(shipAcceleration.x < -32768)
-			{
-				shipAcceleration.x = -32768;
-			}
-			if(shipAcceleration.y < -32768)
-			{
-				shipAcceleration.y = -32768;
-			}
+			if(playerShip.angle >= CIRCLE_DIVISION)	playerShip.angle = 0;
+			if(playerShip.angle < 0)				playerShip.angle = CIRCLE_DIVISION - 1;
 			
-			playerPos.x = starOffset.x >> 8;
-			playerPos.y = starOffset.y >> 8;
+			if(shipAcceleration.x > shipMaxSpeed)shipAcceleration.x = shipMaxSpeed;
+			if(shipAcceleration.y > shipMaxSpeed)shipAcceleration.y = shipMaxSpeed;
+			if(shipAcceleration.x < -shipMaxSpeed)shipAcceleration.x = -shipMaxSpeed;
+			if(shipAcceleration.y < -shipMaxSpeed)shipAcceleration.y = -shipMaxSpeed;
+			
+			playerShip.definition.center.x = starOffset.x >> 8;
+			playerShip.definition.center.y = starOffset.y >> 8;
 			
 			starOffset.x += shipAcceleration.x;
 			starOffset.y += shipAcceleration.y;
 			
-			OAMLOC[3]  = OAMLOC[15] = cosine[shipAngle];
-			OAMLOC[7]  = sine[shipAngle];
-			OAMLOC[11] = -sine[shipAngle];
+			*playerShip.pa	= *playerShip.pd =	cosine[playerShip.angle];
+			*playerShip.pc	=					sine[playerShip.angle];
+			*playerShip.pd	=					-sine[playerShip.angle];
 			
 			BG1HOFS = starOffset.x >> 13;
 			BG2HOFS = starOffset.x >> 14;
@@ -226,9 +178,9 @@ void railGame(void)
 		
 	point 		offscreen	= {255 << 8, 255 << 8};
 		
-	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{(255 << 8), (255 << 8)}, gunTiles[SPRITEWIDTH] >> 1}, 1};
+	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{(255 << 8), (255 << 8)}, gunTiles[SPRITEWIDTH] >> 1}, 1, 0};
 	
-	sprite		target		= {&OAMLOC[84], &OAMLOC[85], &OAMLOC[86], {{32 << 8, 32 << 8}, 16}, 1};
+	sprite		target		= {&OAMLOC[84], &OAMLOC[85], &OAMLOC[86], {{32 << 8, 32 << 8}, 16}, 1, 0};
 	
 	affBG      	earth		= {&BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
 	
@@ -242,8 +194,8 @@ void railGame(void)
 	*gun.pa = *gun.pd 		= gun.paD;
 	*gun.pb = *gun.pc 		= gun.pbD;
 	
-	*target.attribute0		= circleTiles[ATTRIBUTE0] | ((target.definition.location.y >> 8) - spriteCenterY(&circleTiles[0]));
-	*target.attribute1		= circleTiles[ATTRIBUTE1] | ((target.definition.location.x >> 8) - spriteCenterX(&circleTiles[0]));
+	*target.attribute0		= circleTiles[ATTRIBUTE0] | ((target.definition.center.y >> 8) - spriteCenterY(&circleTiles[0]));
+	*target.attribute1		= circleTiles[ATTRIBUTE1] | ((target.definition.center.x >> 8) - spriteCenterX(&circleTiles[0]));
 	*target.attribute2		= circleTiles[ATTRIBUTE2];
 	
 	*earth.pa = *earth.pd 	= earth.paD;
@@ -252,16 +204,16 @@ void railGame(void)
 	
 	for(i = 0; i < maxPlayerShots; i++)
 	{
-		playerProjectiles[i].data.attribute0 				= &OAMLOC[i * 4];
-		playerProjectiles[i].data.attribute1 				= &OAMLOC[i * 4 + 1];
-		playerProjectiles[i].data.attribute2 				= &OAMLOC[i * 4 + 2];
+		playerProjectiles[i].attribute0 			= &OAMLOC[i * 4];
+		playerProjectiles[i].attribute1 			= &OAMLOC[i * 4 + 1];
+		playerProjectiles[i].attribute2 			= &OAMLOC[i * 4 + 2];
 		
-		playerProjectiles[i].data.definition.location.x	= 255 << 8;
-		playerProjectiles[i].data.definition.location.y 	= 255 << 8;
+		playerProjectiles[i].definition.center.x	= 255 << 8;
+		playerProjectiles[i].definition.center.y 	= 255 << 8;
 		
-		*playerProjectiles[i].data.attribute0				= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));
-		*playerProjectiles[i].data.attribute1				= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].data.definition.location.x >> 8) - spriteCenterX(&projectileTiles[0]));
-		*playerProjectiles[i].data.attribute2				= projectileTiles[ATTRIBUTE2];
+		*playerProjectiles[i].attribute0			= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(&projectileTiles[0]));
+		*playerProjectiles[i].attribute1			= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].definition.center.x >> 8) - spriteCenterX(&projectileTiles[0]));
+		*playerProjectiles[i].attribute2			= projectileTiles[ATTRIBUTE2];
 	}
 	
 	loadBGpalette	(railGameBGpalette);
@@ -298,15 +250,23 @@ void railGame(void)
 		{
 			keyPoll();
 			
+			if(target.hit)
+			{
+				target.hit = 0;
+				
+				*target.attribute2 ^= PALETTE15;
+				*target.attribute2 |= circleTiles[ATTRIBUTE2];
+			}
+			
 			if(keyDown(BUTTON_A) && (vBlankCount & 2) && (vBlankCount & 1))
 			{
-				playerProjectiles[projectileIndex].angle 						= gun.angle + ((r() >> 27) - 16);
-				playerProjectiles[projectileIndex].data.enabled 				= 1;
-				playerProjectiles[projectileIndex].data.definition.location.x 	= (cosine[playerProjectiles[projectileIndex].angle] * gunAltitude) + ((earth.screenLocation.x) << 8);
-				playerProjectiles[projectileIndex].data.definition.location.y 	= (-sine[playerProjectiles[projectileIndex].angle] * gunAltitude) + (earth.screenLocation.y << 8);
+				playerProjectiles[projectileIndex].angle 				= gun.angle + ((r() >> 27) - 16);
+				playerProjectiles[projectileIndex].enabled 				= 1;
+				playerProjectiles[projectileIndex].definition.center.x 	= (cosine[playerProjectiles[projectileIndex].angle] * gunAltitude) + ((earth.screenLocation.x) << 8);
+				playerProjectiles[projectileIndex].definition.center.y 	= (-sine[playerProjectiles[projectileIndex].angle] * gunAltitude) + (earth.screenLocation.y << 8);
 				
-				*playerProjectiles[projectileIndex].data.attribute0				= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[projectileIndex].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));
-				*playerProjectiles[projectileIndex].data.attribute1				= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[projectileIndex].data.definition.location.x >> 8) - spriteCenterX(&projectileTiles[0]));
+				*playerProjectiles[projectileIndex].attribute0			= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[projectileIndex].definition.center.y >> 8) - spriteCenterY(&projectileTiles[0]));
+				*playerProjectiles[projectileIndex].attribute1			= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[projectileIndex].definition.center.x >> 8) - spriteCenterX(&projectileTiles[0]));
 				
 				projectileIndex++;
 				if(projectileIndex >= maxPlayerShots)
@@ -327,57 +287,56 @@ void railGame(void)
 			
 			for(i = 0; i < maxPlayerShots; i++)
 			{
-				if(playerProjectiles[i].data.enabled)
+				if(playerProjectiles[i].enabled)
 				{
-					playerProjectiles[i].data.definition.location.y -= sine  [playerProjectiles[i].angle] * playerProjectileSpeed;
-					playerProjectiles[i].data.definition.location.x += cosine[playerProjectiles[i].angle] * playerProjectileSpeed;
+					playerProjectiles[i].definition.center.y -= sine  [playerProjectiles[i].angle] * playerProjectileSpeed;
+					playerProjectiles[i].definition.center.x += cosine[playerProjectiles[i].angle] * playerProjectileSpeed;
 					
-					if(playerProjectiles[i].data.definition.location.x - (spriteCenterX(&projectileTiles[0]) << 8) < 0)
-					playerProjectiles[i].data.definition.location.x = (MAXSPRITEX << 8) + playerProjectiles[i].data.definition.location.x;
+					if(playerProjectiles[i].definition.center.x - (spriteCenterX(&projectileTiles[0]) << 8) < 0)
+					playerProjectiles[i].definition.center.x = (MAXSPRITEX << 8) + playerProjectiles[i].definition.center.x;
 					
-					if(playerProjectiles[i].data.definition.location.y - (spriteCenterY(&projectileTiles[0]) << 8) < 0)
-					playerProjectiles[i].data.definition.location.y = (MAXSPRITEY << 8) + playerProjectiles[i].data.definition.location.y;
+					if(playerProjectiles[i].definition.center.y - (spriteCenterY(&projectileTiles[0]) << 8) < 0)
+					playerProjectiles[i].definition.center.y = (MAXSPRITEY << 8) + playerProjectiles[i].definition.center.y;
 					
-					if(playerProjectiles[i].data.definition.location.y > (SCREENHEIGHT << 8) && playerProjectiles[i].data.definition.location.y < (240 << 8))
+					if(playerProjectiles[i].definition.center.y > (SCREENHEIGHT << 8) && playerProjectiles[i].definition.center.y < (240 << 8))
 					{
-						playerProjectiles[i].data.enabled = 0;
+						playerProjectiles[i].enabled = 0;
 						
-						playerProjectiles[i].data.definition.location = offscreen;
+						playerProjectiles[i].definition.center = offscreen;
 					}
 					
-					if(circle_circle(playerProjectiles[i].data.definition, target.definition))
+					if(circle_circle(playerProjectiles[i].definition, target.definition))
 					{
-						playerProjectiles[i].data.enabled = 0;
+						playerProjectiles[i].enabled = 0;
 						
-						playerProjectiles[i].data.definition.location = offscreen;
+						playerProjectiles[i].definition.center = offscreen;
 						
-						*target.attribute0 = (circleTiles[ATTRIBUTE0] ^ (PALETTE15 & circleTiles[ATTRIBUTE0]));
+						*target.attribute2 ^= (*target.attribute2 & PALETTE15);
+						*target.attribute2 |= PALETTE15;
+						target.hit = 1;
 					}
 					
-					*playerProjectiles[i].data.attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].data.definition.location.y >> 8) - spriteCenterY(&projectileTiles[0]));
-					*playerProjectiles[i].data.attribute1 = projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].data.definition.location.x >> 8) - spriteCenterX(&projectileTiles[0]));
+					*playerProjectiles[i].attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(&projectileTiles[0]));
+					*playerProjectiles[i].attribute1 = projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].definition.center.x >> 8) - spriteCenterX(&projectileTiles[0]));
 				}
 			}
 			
 			BG1HOFS	= starXoffset++ >> 2;
 			
-			*gun.pa	= *gun.pd = sine[gun.angle];
-			*gun.pb	= cosine[gun.angle];
-			*gun.pc	= -cosine[gun.angle];
+			*gun.pa					= *gun.pd = sine[gun.angle];
+			*gun.pb					= cosine[gun.angle];
+			*gun.pc					= -cosine[gun.angle];
+			gun.definition.center.y	= (-sine[gun.angle] * gunAltitude)		+ (earth.screenLocation.y << 8);
+			gun.definition.center.x	= (cosine[gun.angle] * gunAltitude)	+ (earth.screenLocation.x << 8);
+			*gun.attribute0			= gunTiles[1] | ((gun.definition.center.y >> 8) - spriteCenterY(&gunTiles[0]));
+			*gun.attribute1			= gunTiles[2] | ((gun.definition.center.x >> 8) - spriteCenterX(&gunTiles[0]));
 			
-			gun.definition.location.y = (-sine[gun.angle] * gunAltitude) 	+ (earth.screenLocation.y << 8);
-			gun.definition.location.x = (cosine[gun.angle] * gunAltitude) 	+ (earth.screenLocation.x << 8);
-			
-			*gun.attribute0 = gunTiles[1] | ((gun.definition.location.y >> 8) - spriteCenterY(&gunTiles[0]));
-			*gun.attribute1 = gunTiles[2] | ((gun.definition.location.x >> 8) - spriteCenterX(&gunTiles[0]));
-			
-			earth.paD = earth.pdD =	cosine[earth.angle];
-			earth.pbD = 			-sine[earth.angle];
-			earth.pcD = 			sine[earth.angle];
-			
+			earth.paD = cosine[earth.angle];
+			earth.pbD = -sine[earth.angle];
+			earth.pcD = sine[earth.angle];
+			earth.pdD = earth.paD;
 			*earth.dx = (earth.locationTex.x << 8) - (earth.paD * earth.screenLocation.x + earth.pbD * earth.screenLocation.y);
 			*earth.dy = (earth.locationTex.y << 8) - (earth.pcD * earth.screenLocation.x + earth.pdD * earth.screenLocation.y);
-			
 			*earth.pa = earth.paD;
 			*earth.pb = earth.pbD;
 			*earth.pc = earth.pcD;

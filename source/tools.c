@@ -222,7 +222,7 @@ u32 circle_circle(circle c1, circle c2)
 {
 	u32 hypotneuse = 0;
 	
-	hypotneuse = squareRoot(square((c1.location.x >> 8) - (c2.location.x >> 8)) + square((c1.location.y >> 8) - (c2.location.y >> 8)));
+	hypotneuse = squareRoot(square((c1.center.x >> 8) - (c2.center.x >> 8)) + square((c1.center.y >> 8) - (c2.center.y >> 8)));
 	
 	if(hypotneuse < (c1.radius + c2.radius))return 1;
 	else return 0;

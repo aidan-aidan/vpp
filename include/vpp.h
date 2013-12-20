@@ -6,8 +6,12 @@
 #include <..\include\tools.h>
 
 typedef struct projectile{
-	sprite data;
-	u32 angle;
+	u16*	attribute0;
+	u16*	attribute1;
+	u16*	attribute2;
+	circle	definition;
+	u32		enabled;
+	u32 	angle;
 }projectile;
 
 #define PRESSSTARTRED 	0x2D7F
