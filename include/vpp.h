@@ -18,10 +18,12 @@ typedef struct projectile{
 #define MAXGUNANGLE		716
 #define MINGUNANGLE		308
 
-void titleScreen(void);
-void gameScreen(void);
-void railGame(void);
-void drawDOS(const char*, u16*, u32, point, u32);
+void titleScreen	(void);
+void gameScreen		(void);
+void railGame		(void);
+void spriteFlash	(sprite*);
+void spriteNormal	(sprite*);
+void drawDOS		(const char*, u16*, u32, point, u32);
 
 
 

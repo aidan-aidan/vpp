@@ -39,29 +39,33 @@ typedef struct circle{
 	u32 radius;
 }circle;
 typedef struct affSprite{
-	u16*	attribute0;
-	u16*	attribute1;
-	u16*	attribute2;
-	u16*	pa;
-	u16*	pb;
-	u16*	pc;
-	u16*	pd;
-	s32		paD;
-	s32		pbD;
-	s32		pcD;
-	s32		pdD;
-	u32   	angle;
-	circle	definition;
-	u32		enabled;
-	u32		hit;
+	u16*		attribute0;
+	u16*		attribute1;
+	u16*		attribute2;
+	u16*		pa;
+	u16*		pb;
+	u16*		pc;
+	u16*		pd;
+	s32			paD;
+	s32			pbD;
+	s32			pcD;
+	s32			pdD;
+	u32   		angle;
+	circle		definition;
+	u32			enabled;
+	u32			hit;
+	const u32*	tileData;
+	s32			health;
 }affSprite;
 typedef struct sprite{
-	u16*	attribute0;
-	u16*	attribute1;
-	u16*	attribute2;
-	circle	definition;
-	u32		enabled;
-	u32		hit;
+	u16*		attribute0;
+	u16*		attribute1;
+	u16*		attribute2;
+	circle		definition;
+	u32			enabled;
+	u32			hit;
+	const u32*	tileData;
+	s32			health;
 }sprite;
 
 #define N              (624)

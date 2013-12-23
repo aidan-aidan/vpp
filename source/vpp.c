@@ -174,13 +174,14 @@ void railGame(void)
 		maxPlayerShots  		= 20,
 		gunAltitude				= 135,
 		gunSpeed 				= 4,
+		gunDamage				= 5,
 		starXoffset				= 0;
 		
-	point 		offscreen	= {255 << 8, 255 << 8};
+	circle 		offscreen	= {{255 << 8, 255 << 8}, 0};
 		
-	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{(255 << 8), (255 << 8)}, gunTiles[SPRITEWIDTH] >> 1}, 1, 0};
+	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{(255 << 8), (255 << 8)}, gunTiles[SPRITEWIDTH] >> 1}, 1, 0, gunTiles, 100};
 	
-	sprite		target		= {&OAMLOC[84], &OAMLOC[85], &OAMLOC[86], {{32 << 8, 32 << 8}, 16}, 1, 0};
+	sprite		target		= {&OAMLOC[84], &OAMLOC[85], &OAMLOC[86], {{32 << 8, 32 << 8}, 16}, 1, 0, circleTiles, 50};
 	
 	affBG      	earth		= {&BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
 	
@@ -231,9 +232,9 @@ void railGame(void)
 	
 	for(i = 0; i < BG64X32U32_LENGTH; i++)
 	{
-		if(r() >> 25 < 32)
+		if(r() >> 24 < 32)
 		{
-			SBB29_U32_LOC[i] = ((r() >> 27) | ((r() >> 30) << 10) | PALETTE1) | (((r() >> 27) | ((r() >> 30) << 10) | PALETTE1) << 16);
+			SBB29_U32_LOC[i] = ((r() >> 26) | ((r() >> 30) << 10) | PALETTE1) | (((r() >> 26) | ((r() >> 30) << 10) | PALETTE1) << 16);
 		}
 	}
 	
@@ -252,10 +253,7 @@ void railGame(void)
 			
 			if(target.hit)
 			{
-				target.hit = 0;
-				
-				*target.attribute2 ^= PALETTE15;
-				*target.attribute2 |= circleTiles[ATTRIBUTE2];
+				spriteNormal(&target);
 			}
 			
 			if(keyDown(BUTTON_A) && (vBlankCount & 2) && (vBlankCount & 1))
@@ -302,18 +300,18 @@ void railGame(void)
 					{
 						playerProjectiles[i].enabled = 0;
 						
-						playerProjectiles[i].definition.center = offscreen;
+						playerProjectiles[i].definition = offscreen;
 					}
 					
 					if(circle_circle(playerProjectiles[i].definition, target.definition))
 					{
 						playerProjectiles[i].enabled = 0;
 						
-						playerProjectiles[i].definition.center = offscreen;
+						playerProjectiles[i].definition = offscreen;
 						
-						*target.attribute2 ^= (*target.attribute2 & PALETTE15);
-						*target.attribute2 |= PALETTE15;
-						target.hit = 1;
+						spriteFlash(&target);
+						
+						target.health -= gunDamage;
 					}
 					
 					*playerProjectiles[i].attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(&projectileTiles[0]));
@@ -328,8 +326,8 @@ void railGame(void)
 			*gun.pc					= -cosine[gun.angle];
 			gun.definition.center.y	= (-sine[gun.angle] * gunAltitude)		+ (earth.screenLocation.y << 8);
 			gun.definition.center.x	= (cosine[gun.angle] * gunAltitude)	+ (earth.screenLocation.x << 8);
-			*gun.attribute0			= gunTiles[1] | ((gun.definition.center.y >> 8) - spriteCenterY(&gunTiles[0]));
-			*gun.attribute1			= gunTiles[2] | ((gun.definition.center.x >> 8) - spriteCenterX(&gunTiles[0]));
+			*gun.attribute0			= gunTiles[ATTRIBUTE0] | ((gun.definition.center.y >> 8) - spriteCenterY(&gunTiles[0]));
+			*gun.attribute1			= gunTiles[ATTRIBUTE1] | ((gun.definition.center.x >> 8) - spriteCenterX(&gunTiles[0]));
 			
 			earth.paD = cosine[earth.angle];
 			earth.pbD = -sine[earth.angle];
@@ -345,6 +343,20 @@ void railGame(void)
 		
 		vBlankBool_B = vBlankBool_A;
 	}
+}
+
+void spriteFlash(sprite* sprite)
+{
+	*sprite->attribute2 ^= (*sprite->attribute2 & PALETTE15);
+	*sprite->attribute2 |= PALETTE15;
+	sprite->hit = 1;
+}
+
+void spriteNormal(sprite* sprite)
+{
+	sprite->hit = 0;
+	*sprite->attribute2 ^= PALETTE15;
+	*sprite->attribute2 |= sprite->tileData[ATTRIBUTE2];
 }
 
 void drawDOS(const char* string, u16* SBB, u32 length, point location, u32 palette)
