@@ -1,4 +1,4 @@
-tools.o: d:/programs/vpp/source/tools.c \
- d:/programs/vpp/build/..\include\tools.h
+tools.o: k:/programs/vpp/source/tools.c \
+ k:/programs/vpp/build/..\include\tools.h
 
-d:/programs/vpp/build/..\include\tools.h:
+k:/programs/vpp/build/..\include\tools.h:

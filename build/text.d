@@ -1,7 +1,7 @@
-text.o: d:/programs/vpp/source/text.c \
- d:/programs/vpp/build/..\include\tools.h \
- d:/programs/vpp/build/..\include\text.h
+text.o: k:/programs/vpp/source/text.c \
+ k:/programs/vpp/build/..\include\tools.h \
+ k:/programs/vpp/build/..\include\text.h
 
-d:/programs/vpp/build/..\include\tools.h:
+k:/programs/vpp/build/..\include\tools.h:
 
-d:/programs/vpp/build/..\include\text.h:
+k:/programs/vpp/build/..\include\text.h:

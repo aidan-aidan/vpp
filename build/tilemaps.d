@@ -1,7 +1,7 @@
-tilemaps.o: d:/programs/vpp/source/tilemaps.c \
- d:/programs/vpp/build/..\include\tools.h \
- d:/programs/vpp/build/..\include\tilemaps.h
+tilemaps.o: k:/programs/vpp/source/tilemaps.c \
+ k:/programs/vpp/build/..\include\tools.h \
+ k:/programs/vpp/build/..\include\tilemaps.h
 
-d:/programs/vpp/build/..\include\tools.h:
+k:/programs/vpp/build/..\include\tools.h:
 
-d:/programs/vpp/build/..\include\tilemaps.h:
+k:/programs/vpp/build/..\include\tilemaps.h:

@@ -1,7 +1,7 @@
-sprites.o: d:/programs/vpp/source/sprites.c \
- d:/programs/vpp/build/..\include\tools.h \
- d:/programs/vpp/build/..\include\sprites.h
+sprites.o: k:/programs/vpp/source/sprites.c \
+ k:/programs/vpp/build/..\include\tools.h \
+ k:/programs/vpp/build/..\include\sprites.h
 
-d:/programs/vpp/build/..\include\tools.h:
+k:/programs/vpp/build/..\include\tools.h:
 
-d:/programs/vpp/build/..\include\sprites.h:
+k:/programs/vpp/build/..\include\sprites.h:

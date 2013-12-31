@@ -1,7 +1,7 @@
-palettes.o: d:/programs/vpp/source/palettes.c \
- d:/programs/vpp/build/..\include\tools.h \
- d:/programs/vpp/build/..\include\palettes.h
+palettes.o: k:/programs/vpp/source/palettes.c \
+ k:/programs/vpp/build/..\include\tools.h \
+ k:/programs/vpp/build/..\include\palettes.h
 
-d:/programs/vpp/build/..\include\tools.h:
+k:/programs/vpp/build/..\include\tools.h:
 
-d:/programs/vpp/build/..\include\palettes.h:
+k:/programs/vpp/build/..\include\palettes.h:

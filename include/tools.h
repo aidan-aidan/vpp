@@ -117,13 +117,16 @@ extern u16        keyCurrent,
 #define TILEWIDTH			8
 #define TILEHEIGHT			8
 #define CIRCLE_DIVISION		2048
-#define SPRITEWIDTH			4
-#define SPRITEHEIGHT		5
+#define SPRITEDATALENGTH	0
 #define ATTRIBUTE0			1
 #define ATTRIBUTE1			2
 #define ATTRIBUTE2			3
+#define SPRITEWIDTH			4
+#define SPRITEHEIGHT		5
 #define MAXSPRITEX			511
 #define MAXSPRITEY			255
+#define TRUE				1
+#define FALSE				0
 
 #define MODE0                0x0000
 #define MODE1                0x0001

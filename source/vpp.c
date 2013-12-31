@@ -6,6 +6,10 @@
 #include <..\include\text.h>
 #include <..\include\sprites.h>
 
+/*
+All points stored in sprite structures are assumed to be the center fo the sprite, and of the format 24.8
+*/
+
 int main(void)
 {
 	titleScreen();
@@ -50,6 +54,7 @@ void titleScreen(void)
 				setSeed(time);
 				resetBGtilesLoad();
 				resetBGmap(SBB30_U32_LOC, BG64X32U32_LENGTH);
+				DISPCNT = 0;
 				return;
 			}
 			
@@ -179,13 +184,13 @@ void railGame(void)
 		
 	circle 		offscreen	= {{255 << 8, 255 << 8}, 0};
 		
-	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {{(255 << 8), (255 << 8)}, gunTiles[SPRITEWIDTH] >> 1}, 1, 0, gunTiles, 100};
+	affSprite  	gun    		= {&OAMLOC[80], &OAMLOC[81], &OAMLOC[82], &OAMLOC[3], &OAMLOC[7], &OAMLOC[11], &OAMLOC[15], 256, 0, 0, 256, 512, {offscreen.center, gunTiles[SPRITEWIDTH] >> 1}, 1, 0, gunTiles, 100};
 	
 	sprite		target		= {&OAMLOC[84], &OAMLOC[85], &OAMLOC[86], {{32 << 8, 32 << 8}, 16}, 1, 0, circleTiles, 50};
 	
 	affBG      	earth		= {&BG2PA, &BG2PB, &BG2PC, &BG2PD, &BG2X, &BG2Y, &BG2CNT, 256, 0, 0, 256, 0, {120, 256}, {256, 256}};
 	
-	circle     	earthBound 	= {earth.screenLocation, 128};
+	//circle	earthBound 	= {earth.screenLocation, 128};
 	
 	projectile	playerProjectiles[maxPlayerShots];
 	
@@ -195,13 +200,14 @@ void railGame(void)
 	*gun.pa = *gun.pd 		= gun.paD;
 	*gun.pb = *gun.pc 		= gun.pbD;
 	
-	*target.attribute0		= circleTiles[ATTRIBUTE0] | ((target.definition.center.y >> 8) - spriteCenterY(&circleTiles[0]));
-	*target.attribute1		= circleTiles[ATTRIBUTE1] | ((target.definition.center.x >> 8) - spriteCenterX(&circleTiles[0]));
+	*target.attribute0		= circleTiles[ATTRIBUTE0] | ((target.definition.center.y >> 8) - spriteCenterY(circleTiles));
+	*target.attribute1		= circleTiles[ATTRIBUTE1] | ((target.definition.center.x >> 8) - spriteCenterX(circleTiles));
 	*target.attribute2		= circleTiles[ATTRIBUTE2];
 	
 	*earth.pa = *earth.pd 	= earth.paD;
 	*earth.pb = *earth.pc 	= earth.pbD;
-	*earth.dx = *earth.dy 	= 255 << 8;
+	*earth.dx				= earth.screenLocation.x;
+	*earth.dy				= earth.screenLocation.y;
 	
 	for(i = 0; i < maxPlayerShots; i++)
 	{
@@ -209,11 +215,10 @@ void railGame(void)
 		playerProjectiles[i].attribute1 			= &OAMLOC[i * 4 + 1];
 		playerProjectiles[i].attribute2 			= &OAMLOC[i * 4 + 2];
 		
-		playerProjectiles[i].definition.center.x	= 255 << 8;
-		playerProjectiles[i].definition.center.y 	= 255 << 8;
+		playerProjectiles[i].definition.center		= offscreen.center;
 		
-		*playerProjectiles[i].attribute0			= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(&projectileTiles[0]));
-		*playerProjectiles[i].attribute1			= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].definition.center.x >> 8) - spriteCenterX(&projectileTiles[0]));
+		*playerProjectiles[i].attribute0			= projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(projectileTiles));
+		*playerProjectiles[i].attribute1			= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].definition.center.x >> 8) - spriteCenterX(projectileTiles));
 		*playerProjectiles[i].attribute2			= projectileTiles[ATTRIBUTE2];
 	}
 	
@@ -238,10 +243,10 @@ void railGame(void)
 		}
 	}
 	
-	DISPCNT		= 	(MODE1 | BG0_ENABLE	| BG1_ENABLE   | BG2_ENABLE | OBJ_ENABLE | OBJ1D);
 	BG0CNT  	= 	(CBB2  | SBB31 		| BG_REG_32X32 | BGCOLOR16  | BGPRIORITY0);
 	BG1CNT  	= 	(CBB1  | SBB29 		| BG_REG_64X32 | BGCOLOR16  | BGPRIORITY2);
 	*earth.cnt	= 	(CBB0  | SBB27 		| BG_AFF_64X64 | BGCOLOR256 | BGPRIORITY1);
+	DISPCNT		= 	(MODE1 | BG0_ENABLE	| BG1_ENABLE   | BG2_ENABLE | OBJ_ENABLE | OBJ1D);
 		
 	while(1)
 	{
@@ -259,7 +264,7 @@ void railGame(void)
 			if(keyDown(BUTTON_A) && (vBlankCount & 2) && (vBlankCount & 1))
 			{
 				playerProjectiles[projectileIndex].angle 				= gun.angle + ((r() >> 27) - 16);
-				playerProjectiles[projectileIndex].enabled 				= 1;
+				playerProjectiles[projectileIndex].enabled 				= TRUE;
 				playerProjectiles[projectileIndex].definition.center.x 	= (cosine[playerProjectiles[projectileIndex].angle] * gunAltitude) + ((earth.screenLocation.x) << 8);
 				playerProjectiles[projectileIndex].definition.center.y 	= (-sine[playerProjectiles[projectileIndex].angle] * gunAltitude) + (earth.screenLocation.y << 8);
 				
@@ -267,10 +272,7 @@ void railGame(void)
 				*playerProjectiles[projectileIndex].attribute1			= projectileTiles[ATTRIBUTE1] | ((playerProjectiles[projectileIndex].definition.center.x >> 8) - spriteCenterX(&projectileTiles[0]));
 				
 				projectileIndex++;
-				if(projectileIndex >= maxPlayerShots)
-				{
-					projectileIndex = 0;
-				}
+				if(projectileIndex >= maxPlayerShots)projectileIndex = 0;
 			}
 			
 			if(keyDown(BUTTON_L))		gun.angle += 	gunSpeed;
@@ -281,8 +283,6 @@ void railGame(void)
 			earth.angle++;
 			if(earth.angle >= CIRCLE_DIVISION)earth.angle = 0;
 			
-			vBlankCount++;
-			
 			for(i = 0; i < maxPlayerShots; i++)
 			{
 				if(playerProjectiles[i].enabled)
@@ -290,23 +290,22 @@ void railGame(void)
 					playerProjectiles[i].definition.center.y -= sine  [playerProjectiles[i].angle] * playerProjectileSpeed;
 					playerProjectiles[i].definition.center.x += cosine[playerProjectiles[i].angle] * playerProjectileSpeed;
 					
-					if(playerProjectiles[i].definition.center.x - (spriteCenterX(&projectileTiles[0]) << 8) < 0)
+					if(playerProjectiles[i].definition.center.x - (spriteCenterX(projectileTiles) << 8) < 0)
 					playerProjectiles[i].definition.center.x = (MAXSPRITEX << 8) + playerProjectiles[i].definition.center.x;
 					
-					if(playerProjectiles[i].definition.center.y - (spriteCenterY(&projectileTiles[0]) << 8) < 0)
+					if(playerProjectiles[i].definition.center.y - (spriteCenterY(projectileTiles) << 8) < 0)
 					playerProjectiles[i].definition.center.y = (MAXSPRITEY << 8) + playerProjectiles[i].definition.center.y;
 					
-					if(playerProjectiles[i].definition.center.y > (SCREENHEIGHT << 8) && playerProjectiles[i].definition.center.y < (240 << 8))
+					if(playerProjectiles[i].definition.center.y > (SCREENHEIGHT << 8) && playerProjectiles[i].definition.center.y < ((MAXSPRITEY - projectileTiles[SPRITEHEIGHT]) << 8))
 					{
-						playerProjectiles[i].enabled = 0;
+						playerProjectiles[i].enabled = FALSE;
 						
 						playerProjectiles[i].definition = offscreen;
 					}
 					
 					if(circle_circle(playerProjectiles[i].definition, target.definition))
 					{
-						playerProjectiles[i].enabled = 0;
-						
+						playerProjectiles[i].enabled = FALSE;
 						playerProjectiles[i].definition = offscreen;
 						
 						spriteFlash(&target);
@@ -314,8 +313,8 @@ void railGame(void)
 						target.health -= gunDamage;
 					}
 					
-					*playerProjectiles[i].attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(&projectileTiles[0]));
-					*playerProjectiles[i].attribute1 = projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].definition.center.x >> 8) - spriteCenterX(&projectileTiles[0]));
+					*playerProjectiles[i].attribute0 = projectileTiles[ATTRIBUTE0] | ((playerProjectiles[i].definition.center.y >> 8) - spriteCenterY(projectileTiles));
+					*playerProjectiles[i].attribute1 = projectileTiles[ATTRIBUTE1] | ((playerProjectiles[i].definition.center.x >> 8) - spriteCenterX(projectileTiles));
 				}
 			}
 			
@@ -326,8 +325,8 @@ void railGame(void)
 			*gun.pc					= -cosine[gun.angle];
 			gun.definition.center.y	= (-sine[gun.angle] * gunAltitude)		+ (earth.screenLocation.y << 8);
 			gun.definition.center.x	= (cosine[gun.angle] * gunAltitude)	+ (earth.screenLocation.x << 8);
-			*gun.attribute0			= gunTiles[ATTRIBUTE0] | ((gun.definition.center.y >> 8) - spriteCenterY(&gunTiles[0]));
-			*gun.attribute1			= gunTiles[ATTRIBUTE1] | ((gun.definition.center.x >> 8) - spriteCenterX(&gunTiles[0]));
+			*gun.attribute0			= gunTiles[ATTRIBUTE0] | ((gun.definition.center.y >> 8) - spriteCenterY(gunTiles));
+			*gun.attribute1			= gunTiles[ATTRIBUTE1] | ((gun.definition.center.x >> 8) - spriteCenterX(gunTiles));
 			
 			earth.paD = cosine[earth.angle];
 			earth.pbD = -sine[earth.angle];
@@ -339,6 +338,8 @@ void railGame(void)
 			*earth.pb = earth.pbD;
 			*earth.pc = earth.pcD;
 			*earth.pd = earth.pdD;
+			
+			vBlankCount++;
 		}
 		
 		vBlankBool_B = vBlankBool_A;
